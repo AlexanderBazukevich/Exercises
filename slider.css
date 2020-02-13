@@ -1,0 +1,35 @@
+.slider {
+    display: flex;
+    flex-wrap: nowrap;
+    font-size: 0;
+    overflow: hidden;
+}
+
+.slider__title {
+    position: absolute;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.slider__title_small {
+    position: relative;
+}
+
+.slider__item {
+    display: inline-block;
+    width: calc(100% / 3 - 20px);
+    padding: 60px 10px 0;
+    font-size: 1rem;
+    transition: margin, 1s;
+}
+
+.slider__image {
+    display: flex;
+    max-height: 300px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.slider__picture {
+    align-self: center;
+}
