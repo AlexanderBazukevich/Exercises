@@ -52,6 +52,7 @@ const slides = [
 const slider = document.querySelector('.slider');
 let sliderHtml = "";
 let swipeLength = 0;
+let elementWidth = 0;
 
 let currentElementIndex = 1;
 let leftElementIndex = 0;
@@ -69,10 +70,12 @@ slides.forEach( (item) => {
 slider.innerHTML += sliderHtml;
 
 const sliderItems = document.querySelectorAll('.slider__item');
+
 // let elementWidth = sliderItems[0].offsetWidth;
-let elementWidth = sliderItems[0].getBoundingClientRect().width;
+// let elementWidth = sliderItems[0].getBoundingClientRect().width;
 
 slider.addEventListener('click', (event) => {
+        elementWidth = sliderItems[0].offsetWidth;
         
         let selectedItemIndex = getSelectedItemIndex(event);
 

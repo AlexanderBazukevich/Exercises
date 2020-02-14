@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 .slider {
     display: flex;
     flex-wrap: nowrap;
@@ -17,8 +21,9 @@
 
 .slider__item {
     display: inline-block;
-    width: calc(100% / 3 - 20px);
+    width: calc(100% / 3);
     padding: 60px 10px 0;
+    box-sizing: border-box;
     font-size: 1rem;
     transition: margin, 1s;
 }
