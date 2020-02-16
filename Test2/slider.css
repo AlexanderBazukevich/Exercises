@@ -5,37 +5,26 @@ body {
 .slider {
     display: flex;
     flex-wrap: nowrap;
+    width: 50%;
     font-size: 0;
     overflow: hidden;
 }
 
 .slider__title {
-    position: absolute;
     font-size: 40px;
-    font-weight: bold;
 }
 
-.slider__title_small {
-    position: relative;
-}
 
 .slider__item {
-    display: flex;
-    flex-direction: column;
-    max-height: 100vh;
+    display: inline-block;
+    vertical-align: top;
     min-width: calc(100% / 3);
-    padding: 60px 10px 0;
+    padding: 0 10px;
     box-sizing: border-box;
-    font-size: 1rem;
-    transition: margin, 1s;
+    font-size: 20px;
+    transition: margin 1s ease-in-out;
 }
 
 .slider__image {
-    display: flex;
-    overflow: hidden;
-}
-
-.slider__picture {
     width: 100%;
-    align-self: center;
 }
