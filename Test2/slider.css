@@ -5,6 +5,7 @@ body {
 .slider {
     display: flex;
     flex-wrap: nowrap;
+    margin: auto;
     width: 50%;
     font-size: 0;
     overflow: hidden;
@@ -22,7 +23,7 @@ body {
     padding: 0 10px;
     box-sizing: border-box;
     font-size: 20px;
-    transition: margin 1s ease-in-out;
+    transition: margin .06s ease-in;
 }
 
 .slider__image {

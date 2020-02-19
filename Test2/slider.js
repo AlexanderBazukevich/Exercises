@@ -45,6 +45,7 @@ const slider = document.querySelector('.slider');
 let sliderHtml = "";
 let swipeLength = 0;
 let visibleItems = 3;
+let currentIndex = 0;
 
 slides.forEach( (item) => {
     sliderHtml += `
@@ -61,38 +62,58 @@ const sliderItems = document.querySelectorAll('.slider__item');
 
 document.addEventListener('keydown', (event) => {
 
-    let elementWidth = Math.round(slider.offsetWidth / visibleItems);
+    let elementWidth = slider.offsetWidth / visibleItems;
 
-    if (event.keyCode == 37 && swipeLength != 0) {
-        swipeLeft(elementWidth);
+    if (event.keyCode == 37 && currentIndex != 0) {
+        currentIndex--;
+        swipe(elementWidth, currentIndex);
     }
 
-    if (event.keyCode == 39 && swipeLength != -elementWidth * (sliderItems.length - visibleItems)) {
-        swipeRight(elementWidth);
+    if (event.keyCode == 39 && currentIndex != sliderItems.length - visibleItems ) {
+        currentIndex++;
+        swipe(elementWidth, currentIndex);
     }
 })
 
 slider.addEventListener('click', (event) => {
-        let eventX = event.clientX;
-        let sliderHalfWidth = Math.round(slider.offsetWidth / 2);
-        let elementWidth = Math.round(slider.offsetWidth / visibleItems);
+        let eventX = event.layerX;
+        let sliderHalfWidth = slider.offsetWidth / 2;
+        let elementWidth = slider.offsetWidth / visibleItems;
 
-        if (eventX <= sliderHalfWidth && swipeLength != 0) {
-            swipeLeft(elementWidth);
+        if (eventX <= sliderHalfWidth && currentIndex != 0) {
+            currentIndex--;
+            swipe(elementWidth, currentIndex);
         }
 
-        if (eventX > sliderHalfWidth && swipeLength != -elementWidth * (sliderItems.length - visibleItems)) {
-            swipeRight(elementWidth);
+        if (eventX > sliderHalfWidth && currentIndex != sliderItems.length - visibleItems) {
+            currentIndex++;
+            swipe(elementWidth, currentIndex);
         }
-        console.log(swipeLength);
 })
 
-function swipeLeft(width) {
-    swipeLength += width;
+window.addEventListener('resize', () => {
+    let elementWidth = slider.offsetWidth / visibleItems;
+    
+    swipe(elementWidth, currentIndex);
+})
+
+function swipe(width, index) {
+    swipeLength = -(width * index);
     sliderItems[0].style.marginLeft = `${swipeLength}px`;
 }
 
-function swipeRight(width) {
-    swipeLength -= width;
-    sliderItems[0].style.marginLeft = `${swipeLength}px`;
-}
+// var observer = new MutationObserver( (mutations) => {
+//     mutations.forEach( (mutation) => {
+//         console.log(mutation.type);
+//         let elementWidth = slider.offsetWidth / visibleItems;
+//         swipe(elementWidth, currentIndex);
+//     })
+// })
+
+// var config = {
+//     attributes: true,
+//     childList: true,
+//     characterData: true
+// }
+
+// observer.observe(slider, config);
