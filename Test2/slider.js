@@ -42,7 +42,9 @@ const slides = [
 ]
 
 const slider = document.querySelector('.slider');
-let sliderHtml = "";
+const indicator = document.querySelector('.indicator');
+let sliderHtml = '';
+let indicatorHtml = '';
 let swipeLength = 0;
 let visibleItems = 3;
 let currentIndex = 0;
@@ -51,34 +53,52 @@ slides.forEach( (item) => {
     sliderHtml += `
     <div class = "slider__item">
         <img class="slider__image" src=${item.picture}>
-        <h2 class="slider__title">${item.title}</h2>
-        <p class="slider__description">${item.content}</p>
     </div>
-    `
+    `   
+        /*<h2 class="slider__title">${item.title}</h2>
+        <p class="slider__description">${item.content}</p>*/
 })
 slider.innerHTML += sliderHtml;
 
 const sliderItems = document.querySelectorAll('.slider__item');
 
-document.addEventListener('keydown', (event) => {
+for (i = 0; i <= sliderItems.length - visibleItems; i++) {
+    indicatorHtml += `
+    <div class="indicator__item"></div>
+    `
+}
 
-    let elementWidth = slider.offsetWidth / visibleItems;
+indicator.innerHTML += indicatorHtml;
+
+const indicatorItems = document.querySelectorAll('.indicator__item');
+activateIndicator(currentIndex);
+
+let elementWidth = slider.offsetWidth / visibleItems;
+let sliderHalfWidth = slider.offsetWidth / 2;
+
+setInterval( () => {
+    if (currentIndex != sliderItems.length - visibleItems) {
+        currentIndex++;
+        swipe(elementWidth, currentIndex);
+    }
+}, 2000)
+
+document.addEventListener('keydown', (event) => {
 
     if (event.keyCode == 37 && currentIndex != 0) {
         currentIndex--;
         swipe(elementWidth, currentIndex);
     }
 
-    if (event.keyCode == 39 && currentIndex != sliderItems.length - visibleItems ) {
+    if (event.keyCode == 39 && currentIndex != sliderItems.length - visibleItems) {
         currentIndex++;
         swipe(elementWidth, currentIndex);
     }
 })
 
 slider.addEventListener('click', (event) => {
+
         let eventX = event.layerX;
-        let sliderHalfWidth = slider.offsetWidth / 2;
-        let elementWidth = slider.offsetWidth / visibleItems;
 
         if (eventX <= sliderHalfWidth && currentIndex != 0) {
             currentIndex--;
@@ -91,15 +111,21 @@ slider.addEventListener('click', (event) => {
         }
 })
 
-window.addEventListener('resize', () => {
-    let elementWidth = slider.offsetWidth / visibleItems;
-    
+window.addEventListener('resize', () => {    
     swipe(elementWidth, currentIndex);
 })
 
 function swipe(width, index) {
     swipeLength = -(width * index);
     sliderItems[0].style.marginLeft = `${swipeLength}px`;
+    activateIndicator(index);
+}
+
+function activateIndicator(index) {
+    indicatorItems.forEach( (item) => {
+        item.classList.remove('indicator__item_active');
+    });
+    indicatorItems[index].classList.add('indicator__item_active');
 }
 
 // var observer = new MutationObserver( (mutations) => {
