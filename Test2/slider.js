@@ -62,24 +62,27 @@ slider.innerHTML += sliderHtml;
 
 const sliderItems = document.querySelectorAll('.slider__item');
 
-for (i = 0; i <= sliderItems.length - visibleItems; i++) {
-    indicatorHtml += `
-    <div class="indicator__item"></div>
-    `
+if (sliderItems.length > visibleItems) {
+    for (i = 0; i <= sliderItems.length - visibleItems; i++) {
+        indicatorHtml += `
+        <div class="indicator__item"></div>
+        `
+    }
 }
-
 indicator.innerHTML += indicatorHtml;
 
 const indicatorItems = document.querySelectorAll('.indicator__item');
-activateIndicator(currentIndex);
+activateIndicator();
 
 let elementWidth = slider.offsetWidth / visibleItems;
 let sliderHalfWidth = slider.offsetWidth / 2;
 
-setInterval( () => {
+let timerID = setInterval( () => {
     if (currentIndex != sliderItems.length - visibleItems) {
         currentIndex++;
-        swipe(elementWidth, currentIndex);
+        swipe();
+    } else { 
+        clearInterval(timerID);
     }
 }, 2000)
 
@@ -87,45 +90,45 @@ document.addEventListener('keydown', (event) => {
 
     if (event.keyCode == 37 && currentIndex != 0) {
         currentIndex--;
-        swipe(elementWidth, currentIndex);
     }
 
     if (event.keyCode == 39 && currentIndex != sliderItems.length - visibleItems) {
         currentIndex++;
-        swipe(elementWidth, currentIndex);
     }
+
+    swipe();
 })
 
 slider.addEventListener('click', (event) => {
 
-        let eventX = event.layerX;
+    let eventX = event.layerX;
 
-        if (eventX <= sliderHalfWidth && currentIndex != 0) {
-            currentIndex--;
-            swipe(elementWidth, currentIndex);
-        }
+    if (eventX <= sliderHalfWidth && currentIndex != 0) {
+        currentIndex--;
+    }
 
-        if (eventX > sliderHalfWidth && currentIndex != sliderItems.length - visibleItems) {
-            currentIndex++;
-            swipe(elementWidth, currentIndex);
-        }
+    if (eventX > sliderHalfWidth && currentIndex != sliderItems.length - visibleItems) {
+        currentIndex++;
+    }
+
+    swipe();
 })
 
 window.addEventListener('resize', () => {    
-    swipe(elementWidth, currentIndex);
+    swipe();
 })
 
-function swipe(width, index) {
-    swipeLength = -(width * index);
+function swipe() {
+    swipeLength = -(elementWidth * currentIndex);
     sliderItems[0].style.marginLeft = `${swipeLength}px`;
-    activateIndicator(index);
+    activateIndicator(currentIndex);
 }
 
-function activateIndicator(index) {
+function activateIndicator() {
     indicatorItems.forEach( (item) => {
         item.classList.remove('indicator__item_active');
     });
-    indicatorItems[index].classList.add('indicator__item_active');
+    indicatorItems[currentIndex].classList.add('indicator__item_active');
 }
 
 // var observer = new MutationObserver( (mutations) => {
