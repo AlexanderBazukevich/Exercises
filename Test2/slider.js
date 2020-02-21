@@ -48,6 +48,7 @@ let indicatorHtml = '';
 let swipeLength = 0;
 let visibleItems = 3;
 let currentIndex = 0;
+let timerID;
 
 slides.forEach( (item) => {
     sliderHtml += `
@@ -77,16 +78,11 @@ activateIndicator();
 let elementWidth = slider.offsetWidth / visibleItems;
 let sliderHalfWidth = slider.offsetWidth / 2;
 
-let timerID = setInterval( () => {
-    if (currentIndex != sliderItems.length - visibleItems) {
-        currentIndex++;
-        swipe();
-    } else { 
-        clearInterval(timerID);
-    }
-}, 2000)
+timerLaunch();
 
 document.addEventListener('keydown', (event) => {
+
+    timerStop();
 
     if (event.keyCode == 37 && currentIndex != 0) {
         currentIndex--;
@@ -97,10 +93,12 @@ document.addEventListener('keydown', (event) => {
     }
 
     swipe();
+    timerLaunch();
 })
 
 slider.addEventListener('click', (event) => {
 
+    timerStop();
     let eventX = event.layerX;
 
     if (eventX <= sliderHalfWidth && currentIndex != 0) {
@@ -112,6 +110,7 @@ slider.addEventListener('click', (event) => {
     }
 
     swipe();
+    timerLaunch();
 })
 
 window.addEventListener('resize', () => {    
@@ -119,8 +118,8 @@ window.addEventListener('resize', () => {
 })
 
 function swipe() {
-    swipeLength = -(elementWidth * currentIndex);
-    sliderItems[0].style.marginLeft = `${swipeLength}px`;
+    swipeLength = elementWidth * currentIndex;
+    sliderItems[0].style.marginLeft = `-${swipeLength}px`;
     activateIndicator(currentIndex);
 }
 
@@ -129,6 +128,21 @@ function activateIndicator() {
         item.classList.remove('indicator__item_active');
     });
     indicatorItems[currentIndex].classList.add('indicator__item_active');
+}
+
+function timerLaunch() {    
+    timerID = setInterval( () => {
+        if (currentIndex != sliderItems.length - visibleItems) {
+            currentIndex++;
+            swipe();
+        } else {
+            timerStop();
+        }
+    }, 2000)
+}
+
+function timerStop() {
+    clearInterval(timerID);
 }
 
 // var observer = new MutationObserver( (mutations) => {
