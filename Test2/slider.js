@@ -92,8 +92,8 @@ slider.addEventListener('click', clickEventHandler);
 
 window.addEventListener('resize', () => {
     timerStop();
-    elementWidth = slider.offsetWidth / visibleItems; 
-    swipe(left);
+    elementWidth = slider.offsetWidth / visibleItems;
+    swipeLeft();
     timerLaunch();
 })
 
@@ -102,31 +102,11 @@ function keyEventHandler(event) {
     timerStop();
 
     if (event.keyCode == 37) {
-
-        slider.insertBefore(sliderItems[lastIndex], sliderItems[currentIndex]);
-        currentIndex = lastIndex;
-
-        if (lastIndex != 0) {
-            lastIndex--;
-        } else {
-            lastIndex = sliderItems.length - 1;
-        }
-
-        swipe(right);
+        swipeRight();
     }
 
     if (event.keyCode == 39) {
-
-        slider.appendChild(sliderItems[currentIndex]);
-        lastIndex = currentIndex;
-
-        if (currentIndex != sliderItems.length - 1) {
-            currentIndex++;
-        } else {
-            currentIndex = 0;
-        }
-
-        swipe(left);
+        swipeLeft();
     }
 
     timerLaunch();
@@ -135,71 +115,78 @@ function keyEventHandler(event) {
 function clickEventHandler(event) {
     
     timerStop();
+
     let eventX = event.layerX;
 
     if (eventX <= sliderHalfWidth) {
-        
-        slider.insertBefore(sliderItems[lastIndex], sliderItems[currentIndex]);
-        currentIndex = lastIndex;
-
-        if (lastIndex != 0) {
-            lastIndex--;
-        } else {
-            lastIndex = sliderItems.length - 1;
-        }
-
-        swipe(right);
+        swipeRight();
     }
 
     if (eventX > sliderHalfWidth) {
-
-        slider.appendChild(sliderItems[currentIndex]);
-        lastIndex = currentIndex;
-
-        if (currentIndex != sliderItems.length - 1) {
-            currentIndex++;
-        } else {
-            currentIndex = 0;
-        }
-
-        swipe(left);
+        swipeLeft();
     }
 
     timerLaunch();
-
 }
 
-function swipe(direction) {
+function swipeLeft() {
+
     slider.removeEventListener('click', clickEventHandler);
     document.removeEventListener('keydown', keyEventHandler);
-    activateIndicator(currentIndex);
+
+    slider.appendChild(sliderItems[currentIndex]);
+    lastIndex = currentIndex;
+
+    if (currentIndex != sliderItems.length - 1) {
+        currentIndex++;
+    } else {
+        currentIndex = 0;
+    }
+
     sliderItems.forEach( (item) => {
         item.style.removeProperty('margin-left');
     })
     sliderItems[currentIndex].style.marginLeft = `-${elementWidth}px`;
-    direction();
-}
 
-function right() {
-    let animation = sliderItems[currentIndex].animate([
-        {marginRight: `-${elementWidth}px`},
-        {marginRight: `0px`}        
-    ], 1000);
-    animation.onfinish = () => {
-        slider.addEventListener('click', clickEventHandler);
-        document.addEventListener('keydown', keyEventHandler);
-    }
-}
-
-function left() {
     let animation = sliderItems[currentIndex].animate([
         {marginLeft: `0px`},
-        {marginLeft: `-${elementWidth}px`}        
+        {marginLeft: `-${elementWidth}px`}
     ], 1000);
     animation.onfinish = () => {
         slider.addEventListener('click', clickEventHandler);
         document.addEventListener('keydown', keyEventHandler);
     }
+    activateIndicator(currentIndex);
+}
+
+function swipeRight() {
+
+    slider.removeEventListener('click', clickEventHandler);
+    document.removeEventListener('keydown', keyEventHandler);
+
+    slider.insertBefore(sliderItems[lastIndex], sliderItems[currentIndex]);
+    currentIndex = lastIndex;
+
+    if (lastIndex != 0) {
+        lastIndex--;
+    } else {
+        lastIndex = sliderItems.length - 1;
+    }
+
+    sliderItems.forEach( (item) => {
+        item.style.removeProperty('margin-left');
+    })
+    sliderItems[currentIndex].style.marginLeft = `-${elementWidth}px`;
+
+    let animation = sliderItems[currentIndex].animate([
+        {marginRight: `-${elementWidth}px`},
+        {marginRight: `0px`}
+    ], 1000);
+    animation.onfinish = () => {
+        slider.addEventListener('click', clickEventHandler);
+        document.addEventListener('keydown', keyEventHandler);
+    }
+    activateIndicator(currentIndex);
 }
 
 function activateIndicator() {
@@ -213,20 +200,9 @@ function activateIndicator() {
     }
 }
 
-function timerLaunch() {    
+function timerLaunch() {
     timerID = setInterval( () => {
-
-        slider.appendChild(sliderItems[currentIndex]);
-        lastIndex = currentIndex;
-
-        if (currentIndex != sliderItems.length - 1) {
-            currentIndex++;
-        } else {
-            currentIndex = 0;
-        }
-
-        swipe(left);
-
+        swipeLeft();
     }, 2000)
 }
 
