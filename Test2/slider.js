@@ -93,7 +93,7 @@ slider.addEventListener('click', clickEventHandler);
 window.addEventListener('resize', () => {
     timerStop();
     elementWidth = slider.offsetWidth / visibleItems;
-    swipeLeft();
+    sliderItems[currentIndex].style.marginLeft = `-${elementWidth}px`;
     timerLaunch();
 })
 
