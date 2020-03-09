@@ -97,6 +97,14 @@ window.addEventListener('resize', () => {
     timerLaunch();
 })
 
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState != 'visible' || document.hidden) {
+        timerStop();
+    } else {
+        timerLaunch();
+    }
+});
+
 function keyEventHandler(event) {
 
     timerStop();
@@ -133,6 +141,7 @@ function swipeLeft() {
 
     slider.removeEventListener('click', clickEventHandler);
     document.removeEventListener('keydown', keyEventHandler);
+    sliderItems[currentIndex].style.removeProperty('margin-left');
 
     slider.appendChild(sliderItems[currentIndex]);
     lastIndex = currentIndex;
@@ -143,9 +152,9 @@ function swipeLeft() {
         currentIndex = 0;
     }
 
-    sliderItems.forEach( (item) => {
-        item.style.removeProperty('margin-left');
-    })
+    // sliderItems.forEach( (item) => {
+    //     item.style.removeProperty('margin-left');
+    // })
     sliderItems[currentIndex].style.marginLeft = `-${elementWidth}px`;
 
     let animation = sliderItems[currentIndex].animate([
@@ -163,6 +172,7 @@ function swipeRight() {
 
     slider.removeEventListener('click', clickEventHandler);
     document.removeEventListener('keydown', keyEventHandler);
+    sliderItems[currentIndex].style.removeProperty('margin-left');
 
     slider.insertBefore(sliderItems[lastIndex], sliderItems[currentIndex]);
     currentIndex = lastIndex;
@@ -173,9 +183,9 @@ function swipeRight() {
         lastIndex = sliderItems.length - 1;
     }
 
-    sliderItems.forEach( (item) => {
-        item.style.removeProperty('margin-left');
-    })
+    // sliderItems.forEach( (item) => {
+    //     item.style.removeProperty('margin-left');
+    // })
     sliderItems[currentIndex].style.marginLeft = `-${elementWidth}px`;
 
     let animation = sliderItems[currentIndex].animate([
