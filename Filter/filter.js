@@ -97,6 +97,7 @@ let optionItems = [
 // let resultItems = [];
 
 showItems(optionItems);
+options.style.maxHeight = `${options.offsetHeight / optionItems.length * 10}px`;
 
 search.addEventListener('keyup', () => {
     let key = search.value.toLowerCase();
@@ -157,7 +158,6 @@ function showItems(data) {
         fragment.appendChild(li);
     })
     options.appendChild(fragment);
-    options.style.maxHeight = `${options.offsetHeight / optionItems.length * 10}px`;
 }
 
 function clearItems() {
