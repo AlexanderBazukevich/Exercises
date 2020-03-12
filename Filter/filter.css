@@ -1,0 +1,13 @@
+.options {
+    margin: 0;
+    padding: 0;
+    max-height: 200px;
+    width: max-content;
+    overflow: scroll;
+}
+
+.sort {
+    vertical-align: top;
+    height: 22px;
+    width: 50px;
+}
