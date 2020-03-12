@@ -151,12 +151,13 @@ function showItems(data) {
     let fragment = document.createDocumentFragment();
 
     data.forEach( (item) => {
+        
         let li = document.createElement('li');
         li.textContent = item.name;
         fragment.appendChild(li);
     })
-
     options.appendChild(fragment);
+    options.style.maxHeight = `${options.offsetHeight / optionItems.length * 10}px`;
 }
 
 function clearItems() {
