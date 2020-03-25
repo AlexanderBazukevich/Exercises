@@ -1,7 +1,6 @@
 let options = document.querySelector('.options');
 let search = document.querySelector('.search');
 let sortButton = document.querySelector('.sort');
-// let optionItems = ['New York', 'Mexico', 'Grodno', 'Newcastle' , 'Grodno', 'Vienna', 'Warsaw', 'Bagdad', 'Porto', 'Milan', 'Athens', 'Paris', 'Parma'];
 let optionItems = [
     {
       name: "Deloris Walton"
@@ -91,38 +90,68 @@ let optionItems = [
       name: "Stein Waters"
     },
     {
-      name: "Estrada Mcguire"
+      name: "Estrada Mcgmuire"
+    },
+    {
+      name: "Esytrada Mcguire"
+    },
+    {
+      name: "Estrada Mcgduire"
+    },
+    {
+      name: "Esmtrada Mcguirce"
+    },
+    {
+      name: "Estrakda Mcguire"
+    },
+    {
+      name: "Estrada Mcguhire"
+    },
+    {
+      name: "Estrrada Mcguire"
+    },
+    {
+      name: "Estrada Mcghuire"
+    },
+    {
+      name: "Esthrada Mcguire"
+    },
+    {
+      name: "Estrada Mcdguire"
     }
   ]
-// let resultItems = [];
 
-showItems(optionItems);
-options.style.maxHeight = `${options.offsetHeight / optionItems.length * 10}px`;
+let visibleItems = [];
+
+showItems(optionItems, visibleItems.length, 11);
+options.style.maxHeight = `${options.firstChild.offsetHeight * 10}px`;
+
+options.addEventListener('scroll', addContent);
 
 search.addEventListener('keyup', () => {
+    options.removeEventListener('scroll', addContent);
+    getVisibleItems();
     let key = search.value.toLowerCase();
-    // optionItems.forEach( (item) => {
-    //     if (item.toLowerCase().startsWith(key)) {
-    //         resultItems.push(item);
-    //     };
-    // })
-
-    // optionItems.map
-    let resultItems = optionItems.filter( (item) => {
-        return item.name.toLowerCase().startsWith(key);
+    if (key == '') {
+        clearItems();
+        getVisibleItems();
+        showItems(optionItems, visibleItems.length, 11);
+        addContent();
+        options.addEventListener('scroll', addContent);
+        return;
+    }
+    let resultItems = visibleItems.filter( (item) => {
+        return item.toLowerCase().startsWith(key);
     })
     clearItems();
-    showItems(resultItems);
-
-    // resultItems = [];
+    showItems(resultItems, 0, resultItems.length);
 })
 
 sortButton.addEventListener('click', () => {
-
-    let tempOptionItems = optionItems.map( (item, i) => {
-        return { index: i, value: item.name.toLowerCase() };
+    getVisibleItems();
+    let tempOptionItems = visibleItems.map( (item, i) => {
+        return { index: i, value: item.toLowerCase() };
     })
-
     tempOptionItems.sort( (a, b) => {
         if (a.value > b.value) {
             return 1;
@@ -132,31 +161,48 @@ sortButton.addEventListener('click', () => {
         }
         return 0;
     })
-
-    let resultItems = tempOptionItems.map( (item) => {
-        return optionItems[item.index];
+    visibleItems = tempOptionItems.map( (item) => {
+        return visibleItems[item.index];
     })
-
     clearItems();
     if (sortButton.value == 'A-Z') {
-        showItems(resultItems);
+        showItems(visibleItems, 0, visibleItems.length);
         sortButton.value = 'Z-A';
     } else {
-        showItems(resultItems.reverse());
+        showItems(visibleItems.reverse(), 0, visibleItems.length);
         sortButton.value = 'A-Z';
     }
 })
 
-function showItems(data) {
+function addContent() {
+  getVisibleItems();
+  let scrollHeight = options.scrollHeight;
+  let scrollTop = options.scrollTop;
+  let clientHeight = options.clientHeight;
+
+  if(scrollHeight - scrollTop == clientHeight && visibleItems.length < optionItems.length && scrollTop != 0) {
+      showItems(optionItems, visibleItems.length, visibleItems.length+10);
+  }
+  return;
+}
+
+function showItems(data, first, last) {
 
     let fragment = document.createDocumentFragment();
 
-    data.forEach( (item) => {
-        
+    for (let i = first; i < last; i++) {
+        if ( i >= data.length) {
+            options.appendChild(fragment);
+            return;
+        }
         let li = document.createElement('li');
-        li.textContent = item.name;
+        if (data[i].name) {
+            li.textContent = data[i].name;
+        } else {
+            li.textContent = data[i];
+        }
         fragment.appendChild(li);
-    })
+    }
     options.appendChild(fragment);
 }
 
@@ -169,11 +215,20 @@ function clearItems() {
     }
 }
 
+function getVisibleItems() {
+    visibleItems = [];
+    let i = 0;
+    options.childNodes.forEach( (item) => {
+        visibleItems[i] = item.innerHTML;
+        i++;
+    });
+}
+
 // function searchKey(string, expression) {
 //     let d = string.toLowerCase();
 //     let result = d.search(new RegExp(expression, 'i'));
 
 //     if (result > 0) {
-//         resultItems.push(string);
+//         visibleItems.push(string);
 //     }
 // }

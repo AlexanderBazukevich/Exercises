@@ -1,9 +1,8 @@
 .options {
     margin: 0;
     padding: 0;
-    width: max-content;
-    overflow: scroll;
-    overflow-x: hidden;
+    width: 200px;
+    overflow: auto;
 }
 
 .sort {
