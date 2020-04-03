@@ -183,14 +183,14 @@ function addContent() {
   if(scrollHeight - scrollTop == clientHeight && visibleItems.length < optionItems.length && scrollTop != 0) {
       showItems(optionItems, visibleItems.length, visibleItems.length+10);
   }
-  return;
+  // return;
 }
 
-function showItems(data, first, last) {
+function showItems(data, from, to) {
 
     let fragment = document.createDocumentFragment();
 
-    for (let i = first; i < last; i++) {
+    for (let i = from; i < to; i++) {
         if ( i >= data.length) {
             options.appendChild(fragment);
             return;
