@@ -184,8 +184,6 @@ sortButton.addEventListener('click', () => {
 })
 
 function addContent() {
-  console.log(resultItems);
-  // console.log(source);
   getVisibleItems();
   let scrollHeight = options.scrollHeight;
   let scrollTop = options.scrollTop;
