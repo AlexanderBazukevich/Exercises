@@ -118,10 +118,17 @@ let optionItems = [
     },
     {
       name: "Estrada Mcdguire"
+    },
+    {
+      name: "Estradaefea Mcdguire"
+    },
+    {
+      name: "Eqwqwqada Mcdguire"
     }
   ]
 
 let visibleItems = [];
+let resultItems = optionItems;
 
 showItems(optionItems, visibleItems.length, 11);
 options.style.maxHeight = `${options.firstChild.offsetHeight * 10}px`;
@@ -130,9 +137,10 @@ options.addEventListener('scroll', addContent);
 
 search.addEventListener('keyup', () => {
     options.removeEventListener('scroll', addContent);
-    getVisibleItems();
+    // getVisibleItems();
     let key = search.value.toLowerCase();
     if (key == '') {
+        resultItems = optionItems;
         clearItems();
         getVisibleItems();
         showItems(optionItems, visibleItems.length, 11);
@@ -140,11 +148,12 @@ search.addEventListener('keyup', () => {
         options.addEventListener('scroll', addContent);
         return;
     }
-    let resultItems = visibleItems.filter( (item) => {
-        return item.toLowerCase().startsWith(key);
+    resultItems = optionItems.filter( (item) => {
+        return item.name.toLowerCase().startsWith(key);
     })
     clearItems();
-    showItems(resultItems, 0, resultItems.length);
+    showItems(resultItems, 0, 11);
+    options.addEventListener('scroll', addContent);
 })
 
 sortButton.addEventListener('click', () => {
@@ -175,15 +184,16 @@ sortButton.addEventListener('click', () => {
 })
 
 function addContent() {
+  console.log(resultItems);
+  // console.log(source);
   getVisibleItems();
   let scrollHeight = options.scrollHeight;
   let scrollTop = options.scrollTop;
   let clientHeight = options.clientHeight;
 
-  if(scrollHeight - scrollTop == clientHeight && visibleItems.length < optionItems.length && scrollTop != 0) {
-      showItems(optionItems, visibleItems.length, visibleItems.length+10);
+  if(scrollHeight - scrollTop == clientHeight && visibleItems.length < resultItems.length && scrollTop != 0) {
+      showItems(resultItems, visibleItems.length, visibleItems.length+10);
   }
-  // return;
 }
 
 function showItems(data, from, to) {
