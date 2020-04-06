@@ -1,6 +1,9 @@
 let options = document.querySelector('.options');
 let search = document.querySelector('.search');
+let space = document.querySelector('.options__space');
 let sortButton = document.querySelector('.sort');
+let count = 0;
+// let differenceSum = 0;
 let optionItems = [
     {
       name: "Deloris Walton"
@@ -132,20 +135,22 @@ let resultItems = optionItems;
 
 showItems(optionItems, visibleItems.length, 11);
 options.style.maxHeight = `${options.firstChild.offsetHeight * 10}px`;
+space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - 11)}px`;
 
 options.addEventListener('scroll', addContent);
 
 search.addEventListener('keyup', () => {
-    options.removeEventListener('scroll', addContent);
+    // options.removeEventListener('scroll', addContent);
     // getVisibleItems();
     let key = search.value.toLowerCase();
     if (key == '') {
         resultItems = optionItems;
         clearItems();
-        getVisibleItems();
-        showItems(optionItems, visibleItems.length, 11);
-        addContent();
-        options.addEventListener('scroll', addContent);
+        // getVisibleItems();
+        showItems(resultItems, visibleItems.length, 11);
+        space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - 11)}px`;
+        // addContent();
+        // options.addEventListener('scroll', addContent);
         return;
     }
     resultItems = optionItems.filter( (item) => {
@@ -153,10 +158,13 @@ search.addEventListener('keyup', () => {
     })
     clearItems();
     showItems(resultItems, 0, 11);
-    options.addEventListener('scroll', addContent);
+    // options.addEventListener('scroll', addContent);
 })
 
 sortButton.addEventListener('click', () => {
+    if (options.lastElementChild == space) {
+        options.removeChild(space);
+    };
     getVisibleItems();
     let tempOptionItems = visibleItems.map( (item, i) => {
         return { index: i, value: item.toLowerCase() };
@@ -185,22 +193,32 @@ sortButton.addEventListener('click', () => {
 
 function addContent() {
   getVisibleItems();
-  let scrollHeight = options.scrollHeight;
+  let firstHeight = options.firstChild.offsetHeight;
   let scrollTop = options.scrollTop;
-  let clientHeight = options.clientHeight;
+  let trunc = Math.trunc(scrollTop / firstHeight);
+  console.log(count);
+  // console.log(trunc);
 
-  if(scrollHeight - scrollTop == clientHeight && visibleItems.length < resultItems.length && scrollTop != 0) {
-      showItems(resultItems, visibleItems.length, visibleItems.length+10);
+  if (trunc > count) {
+      showItems(resultItems, visibleItems.length, visibleItems.length + (trunc - count));
+      count = trunc;
+  }
+  if (resultItems.length == visibleItems.length) {
+    count = 0;
   }
 }
 
 function showItems(data, from, to) {
-
+    if (options.lastElementChild == space) {
+        options.removeChild(space);
+    };
     let fragment = document.createDocumentFragment();
 
     for (let i = from; i < to; i++) {
         if ( i >= data.length) {
             options.appendChild(fragment);
+            options.appendChild(space);
+            space.style.height = 0;
             return;
         }
         let li = document.createElement('li');
@@ -212,6 +230,10 @@ function showItems(data, from, to) {
         fragment.appendChild(li);
     }
     options.appendChild(fragment);
+    if (resultItems.length > 10) {
+        options.appendChild(space);
+        space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - (visibleItems.length - 1))}px`;
+    }
 }
 
 function clearItems() {
