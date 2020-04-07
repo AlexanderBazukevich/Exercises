@@ -3,7 +3,6 @@ let search = document.querySelector('.search');
 let space = document.querySelector('.options__space');
 let sortButton = document.querySelector('.sort');
 let count = 0;
-// let differenceSum = 0;
 let optionItems = [
     {
       name: "Deloris Walton"
@@ -135,22 +134,18 @@ let resultItems = optionItems;
 
 showItems(optionItems, visibleItems.length, 11);
 options.style.maxHeight = `${options.firstChild.offsetHeight * 10}px`;
-space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - 11)}px`;
 
 options.addEventListener('scroll', addContent);
 
 search.addEventListener('keyup', () => {
-    // options.removeEventListener('scroll', addContent);
-    // getVisibleItems();
+    options.scrollTop = 0;
+    getVisibleItems();
     let key = search.value.toLowerCase();
     if (key == '') {
         resultItems = optionItems;
         clearItems();
-        // getVisibleItems();
-        showItems(resultItems, visibleItems.length, 11);
-        space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - 11)}px`;
-        // addContent();
-        // options.addEventListener('scroll', addContent);
+        showItems(resultItems, 0, 11);
+        count = 0;
         return;
     }
     resultItems = optionItems.filter( (item) => {
@@ -158,10 +153,12 @@ search.addEventListener('keyup', () => {
     })
     clearItems();
     showItems(resultItems, 0, 11);
-    // options.addEventListener('scroll', addContent);
+    count = 0;
 })
 
 sortButton.addEventListener('click', () => {
+    options.scrollTop = 0;
+    
     if (options.lastElementChild == space) {
         options.removeChild(space);
     };
@@ -196,15 +193,17 @@ function addContent() {
   let firstHeight = options.firstChild.offsetHeight;
   let scrollTop = options.scrollTop;
   let trunc = Math.trunc(scrollTop / firstHeight);
-  console.log(count);
-  // console.log(trunc);
+
+  if (options.lastElementChild != space) {
+    return;
+  }
 
   if (trunc > count) {
-      showItems(resultItems, visibleItems.length, visibleItems.length + (trunc - count));
+      showItems(resultItems, (visibleItems.length - 1), (visibleItems.length + (trunc - count) - 1));
       count = trunc;
   }
-  if (resultItems.length == visibleItems.length) {
-    count = 0;
+  if (resultItems.length == visibleItems.length - 1) {
+      count = 0;
   }
 }
 
@@ -217,8 +216,6 @@ function showItems(data, from, to) {
     for (let i = from; i < to; i++) {
         if ( i >= data.length) {
             options.appendChild(fragment);
-            options.appendChild(space);
-            space.style.height = 0;
             return;
         }
         let li = document.createElement('li');
@@ -230,9 +227,10 @@ function showItems(data, from, to) {
         fragment.appendChild(li);
     }
     options.appendChild(fragment);
-    if (resultItems.length > 10) {
+    getVisibleItems();
+    if (resultItems.length > 10 && visibleItems.length != resultItems.length) {
         options.appendChild(space);
-        space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - (visibleItems.length - 1))}px`;
+        space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - visibleItems.length)}px`;
     }
 }
 
