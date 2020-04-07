@@ -189,22 +189,27 @@ sortButton.addEventListener('click', () => {
 })
 
 function addContent() {
-  getVisibleItems();
-  let firstHeight = options.firstChild.offsetHeight;
-  let scrollTop = options.scrollTop;
-  let trunc = Math.trunc(scrollTop / firstHeight);
+    getVisibleItems();
+    let firstHeight = options.firstChild.offsetHeight;
+    let scrollTop = options.scrollTop;
+    let trunc = Math.trunc(scrollTop / firstHeight);
 
-  if (options.lastElementChild != space) {
-    return;
-  }
+    console.log(trunc);
+    console.log(count);
 
-  if (trunc > count) {
-      showItems(resultItems, (visibleItems.length - 1), (visibleItems.length + (trunc - count) - 1));
-      count = trunc;
-  }
-  if (resultItems.length == visibleItems.length - 1) {
-      count = 0;
-  }
+    if (options.lastElementChild != space && trunc == count) {
+        trunc--;
+    }
+
+    if (trunc > count) {
+        showItems(resultItems, (visibleItems.length - 1), (visibleItems.length + (trunc - count) - 1));
+        count = trunc;
+    }
+
+    if (trunc < count) {
+        deleteItems(count - trunc);
+        count = trunc;
+    }
 }
 
 function showItems(data, from, to) {
@@ -227,6 +232,24 @@ function showItems(data, from, to) {
         fragment.appendChild(li);
     }
     options.appendChild(fragment);
+
+    getVisibleItems();
+    if (resultItems.length > 10 && visibleItems.length != resultItems.length) {
+        options.appendChild(space);
+        space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - visibleItems.length)}px`;
+    }
+}
+
+function deleteItems(number) {
+
+    if (options.lastElementChild == space) {
+        options.removeChild(space);
+    };    
+
+    for (let i = 0; i < number; i++) {
+        options.removeChild(options.lastElementChild);
+    }
+
     getVisibleItems();
     if (resultItems.length > 10 && visibleItems.length != resultItems.length) {
         options.appendChild(space);
@@ -251,12 +274,3 @@ function getVisibleItems() {
         i++;
     });
 }
-
-// function searchKey(string, expression) {
-//     let d = string.toLowerCase();
-//     let result = d.search(new RegExp(expression, 'i'));
-
-//     if (result > 0) {
-//         visibleItems.push(string);
-//     }
-// }
