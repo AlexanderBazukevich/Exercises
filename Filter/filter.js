@@ -132,70 +132,13 @@ let optionItems = [
 let visibleItems = [];
 let resultItems = optionItems;
 
-showItems(optionItems, visibleItems.length, 11);
+showItems(optionItems, visibleItems.length, 10);
 options.style.maxHeight = `${options.firstChild.offsetHeight * 10}px`;
 
-options.addEventListener('scroll', addContent);
+options.addEventListener('scroll', () => {
 
-search.addEventListener('keyup', () => {
-    options.scrollTop = 0;
     getVisibleItems();
-    let key = search.value.toLowerCase();
-    if (key == '') {
-        resultItems = optionItems;
-        clearItems();
-        showItems(resultItems, 0, 11);
-        count = 0;
-        return;
-    }
-    resultItems = optionItems.filter( (item) => {
-        return item.name.toLowerCase().startsWith(key);
-    })
-    clearItems();
-    showItems(resultItems, 0, 11);
-    count = 0;
-})
-
-sortButton.addEventListener('click', () => {
-    options.scrollTop = 0;
-    
-    if (options.lastElementChild == space) {
-        options.removeChild(space);
-    };
-    getVisibleItems();
-    let tempOptionItems = visibleItems.map( (item, i) => {
-        return { index: i, value: item.toLowerCase() };
-    })
-    tempOptionItems.sort( (a, b) => {
-        if (a.value > b.value) {
-            return 1;
-        }
-        if (a.value < b.value) {
-            return -1;
-        }
-        return 0;
-    })
-    visibleItems = tempOptionItems.map( (item) => {
-        return visibleItems[item.index];
-    })
-    clearItems();
-    if (sortButton.value == 'A-Z') {
-        showItems(visibleItems, 0, visibleItems.length);
-        sortButton.value = 'Z-A';
-    } else {
-        showItems(visibleItems.reverse(), 0, visibleItems.length);
-        sortButton.value = 'A-Z';
-    }
-})
-
-function addContent() {
-    getVisibleItems();
-    let firstHeight = options.firstChild.offsetHeight;
-    let scrollTop = options.scrollTop;
-    let trunc = Math.trunc(scrollTop / firstHeight);
-
-    console.log(trunc);
-    console.log(count);
+    let trunc = Math.trunc(options.scrollTop / options.firstChild.offsetHeight);
 
     if (options.lastElementChild != space && trunc == count) {
         trunc--;
@@ -210,13 +153,71 @@ function addContent() {
         deleteItems(count - trunc);
         count = trunc;
     }
-}
+});
+
+search.addEventListener('keyup', () => {
+  
+    options.scrollTop = 0;
+    resultItems = optionItems;
+    getVisibleItems();
+    let key = search.value.toLowerCase();
+
+    if (key == '') {
+        clearItems();
+        showItems(resultItems, 0, 10);
+        count = 0;
+        return;
+    }
+
+    resultItems = optionItems.filter( (item) => {
+        return item.name.toLowerCase().startsWith(key);
+    })
+
+    clearItems();
+    showItems(resultItems, 0, 10);
+    count = 0;
+})
+
+sortButton.addEventListener('click', () => {
+
+    options.scrollTop = 0;
+    removeSpace()
+    getVisibleItems();
+
+    let tempOptionItems = visibleItems.map( (item, i) => {
+        return { index: i, value: item.toLowerCase() };
+    })
+
+    tempOptionItems.sort( (a, b) => {
+        if (a.value > b.value) {
+            return 1;
+        }
+        if (a.value < b.value) {
+            return -1;
+        }
+        return 0;
+    })
+    
+    visibleItems = tempOptionItems.map( (item) => {
+        return visibleItems[item.index];
+    })
+    
+    resultItems = visibleItems;
+    clearItems();
+
+    if (sortButton.value == 'A-Z') {
+        showItems(visibleItems, 0, visibleItems.length);
+        sortButton.value = 'Z-A';
+    } else {
+        showItems(visibleItems.reverse(), 0, visibleItems.length);
+        sortButton.value = 'A-Z';
+    }
+})
 
 function showItems(data, from, to) {
-    if (options.lastElementChild == space) {
-        options.removeChild(space);
-    };
-    let fragment = document.createDocumentFragment();
+    
+    let fragment = document.createDocumentFragment()
+    removeSpace();
 
     for (let i = from; i < to; i++) {
         if ( i >= data.length) {
@@ -242,9 +243,7 @@ function showItems(data, from, to) {
 
 function deleteItems(number) {
 
-    if (options.lastElementChild == space) {
-        options.removeChild(space);
-    };    
+    removeSpace()
 
     for (let i = 0; i < number; i++) {
         options.removeChild(options.lastElementChild);
@@ -258,6 +257,7 @@ function deleteItems(number) {
 }
 
 function clearItems() {
+
     let child = options.lastElementChild;
 
     while (child) {
@@ -267,10 +267,18 @@ function clearItems() {
 }
 
 function getVisibleItems() {
+
     visibleItems = [];
     let i = 0;
+
     options.childNodes.forEach( (item) => {
         visibleItems[i] = item.innerHTML;
         i++;
     });
+}
+
+function removeSpace() {
+  if (options.lastElementChild == space) {
+      options.removeChild(space);
+  };    
 }
