@@ -2,17 +2,20 @@
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    margin-left: 40%;
+    margin: auto;
+    padding-left: 20px;
+    height: 500px;
+    width: 800px;
+    overflow: hidden;
 }
 
 .slider__item {
     position: relative;
+    transition: margin-right 1s ease-out, height .3s ease-out;
 }
 
-/* .slider__item:hover {
-    margin-left: -15px;
-} */
-
 .slider__image {
+    position: absolute;
     height: 100%;
+    transition: margin .2s ease-out;
 }
