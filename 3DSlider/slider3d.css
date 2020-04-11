@@ -11,11 +11,11 @@
 
 .slider__item {
     position: relative;
-    transition: margin-right 1s ease-out, height .3s ease-out;
+    transition: margin 1s ease-out, height .3s ease-out;
 }
 
 .slider__image {
     position: absolute;
     height: 100%;
-    transition: margin .2s ease-out;
+    transition: margin .1s ease-out;
 }
