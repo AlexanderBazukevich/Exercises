@@ -133,26 +133,27 @@ let visibleItems = [];
 let resultItems = optionItems;
 
 showItems(optionItems, visibleItems.length, 10);
-let elementHeight = options.firstChild.offsetHeight;
-options.style.maxHeight = `${elementHeight * 10}px`;
+options.style.maxHeight = `${options.firstChild.offsetHeight * 10}px`;
 
 options.addEventListener('scroll', () => {
 
-    //this method makes full refresh of list and adds number of items depending from scrolling height
-    let visibleHeight = 10 * elementHeight;
+    //This method makes full refresh of list and adds number of items depending from scrolling height
+    
+    let visibleHeight = 10 * options.firstChild.offsetHeight;
+    let scrollHeight = visibleHeight + options.scrollTop;
+    let resultElementsNumber = Math.trunc(scrollHeight / options.firstChild.offsetHeight);
+    
     getVisibleItems();
 
-    let scrollHeight = visibleHeight + options.scrollTop;
-    let resultElementsNumber = Math.trunc(scrollHeight / elementHeight);
-
-    if (resultElementsNumber === visibleItems.length - 1) {
+    if (resultElementsNumber === visibleItems.length - 1 || resultItems.length === 10) {
       return;
     }
 
     clearItems();
     showItems(resultItems, 0, resultElementsNumber);
 
-    //--this method added elements without full list refreshing:
+    //This method added elements without full list refreshing:
+
     // let trunc = Math.trunc(options.scrollTop / options.firstChild.offsetHeight);
 
     // if (options.lastElementChild != space && trunc == count) {
@@ -254,6 +255,10 @@ function showItems(data, from, to) {
     if (resultItems.length > 10 && visibleItems.length != resultItems.length) {
         options.appendChild(space);
         space.style.height = `${options.firstChild.offsetHeight * (resultItems.length - visibleItems.length)}px`;
+    }
+    if (resultItems.length === 10) {
+        options.appendChild(space);
+        space.style.height = `${options.firstChild.offsetHeight}px`;
     }
 }
 
