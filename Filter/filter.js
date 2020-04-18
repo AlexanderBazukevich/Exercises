@@ -133,26 +133,42 @@ let visibleItems = [];
 let resultItems = optionItems;
 
 showItems(optionItems, visibleItems.length, 10);
-options.style.maxHeight = `${options.firstChild.offsetHeight * 10}px`;
+let elementHeight = options.firstChild.offsetHeight;
+options.style.maxHeight = `${elementHeight * 10}px`;
 
 options.addEventListener('scroll', () => {
 
+    //this method makes full refresh of list and adds number of items depending from scrolling height
+    let visibleHeight = 10 * elementHeight;
     getVisibleItems();
-    let trunc = Math.trunc(options.scrollTop / options.firstChild.offsetHeight);
 
-    if (options.lastElementChild != space && trunc == count) {
-        trunc--;
+    let scrollHeight = visibleHeight + options.scrollTop;
+    let resultElementsNumber = Math.trunc(scrollHeight / elementHeight);
+
+    if (resultElementsNumber === visibleItems.length - 1) {
+      return;
     }
 
-    if (trunc > count) {
-        showItems(resultItems, (visibleItems.length - 1), (visibleItems.length + (trunc - count) - 1));
-        count = trunc;
-    }
+    clearItems();
+    showItems(resultItems, 0, resultElementsNumber);
 
-    if (trunc < count) {
-        deleteItems(count - trunc);
-        count = trunc;
-    }
+    //--this method added elements without full list refreshing:
+    // let trunc = Math.trunc(options.scrollTop / options.firstChild.offsetHeight);
+
+    // if (options.lastElementChild != space && trunc == count) {
+    //     trunc--;
+    // }
+
+    // if (trunc > count) {
+    //     showItems(resultItems, (visibleItems.length - 1), (visibleItems.length + (trunc - count) - 1));
+    //     count = trunc;
+    // }
+
+    // if (trunc < count) {
+    //     deleteItems(count - trunc);
+    //     count = trunc;
+    // }
+
 });
 
 search.addEventListener('keyup', () => {
@@ -243,7 +259,7 @@ function showItems(data, from, to) {
 
 function deleteItems(number) {
 
-    removeSpace()
+    removeSpace();
 
     for (let i = 0; i < number; i++) {
         options.removeChild(options.lastElementChild);
@@ -269,11 +285,9 @@ function clearItems() {
 function getVisibleItems() {
 
     visibleItems = [];
-    let i = 0;
 
     options.childNodes.forEach( (item) => {
-        visibleItems[i] = item.innerHTML;
-        i++;
+        visibleItems.push(item.innerHTML);
     });
 }
 
