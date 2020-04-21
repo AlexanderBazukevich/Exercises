@@ -2,35 +2,36 @@
 <html>
     <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="filter2.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>Filter2</title>
     </head>
     <body>
-        <div class="vinyls">
-            <div class="vinyls__title">Топ 100 виниловых пластинок всех времён</div>
-            <select class="vinyls__number">
-                <!-- <option disabled selected>Показать на странице</option> -->
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-            </select>
-            <table class="table">
-                <thead class="thead-dark">
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Cover</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Year</th>
-                </tr>
-                </thead>
-                <tbody class="table-body"></tbody>
-            </table>
-            <div class="pagination">
-                <div class="pagination__button pagination__button_prev">Prev</div>
-                <div class="pages"></div>
-                <div class="pagination__button pagination__button_next">Next</div>
+        <div class="container">
+            <h1>Топ 100 виниловых пластинок всех времён</h1>
+            <div class="form-group">                
+                <select class="form-control" data-table="show">
+                    <option>5</option>
+                    <option>10</option>
+                    <option>20</option>
+                </select>
             </div>
+            <table class="table" height="100">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" width="50">ID</th>
+                        <th scope="col" width="200">Cover</th>
+                        <th scope="col" width="650">Name</th>
+                        <th scope="col" width="100">Year</th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="scroll">
+                <table class="table" data-table="vinyls">
+                    <tbody></tbody>
+                </table>
+            </div>
+            <ul class="pagination justify-content-center"></ul>
         </div>
         <script src="filter2.js"></script>
     </body>

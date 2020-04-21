@@ -151,13 +151,12 @@ const library = [
     // }
 ]
 
-const tableBody = document.querySelector('.table-body');
-const select = document.querySelector('.vinyls__number');
+const tableBody = document.querySelector('[data-table=vinyls] tbody');
+const select = document.querySelector('[data-table=show]');
 const pagination = document.querySelector('.pagination');
-const pages = document.querySelector('.pages');
-const prevButton = document.querySelector('.pagination__button_prev');
-const nextButton = document.querySelector('.pagination__button_next');
-
+const scroll = document.querySelector('.scroll');
+console.log(tableBody);
+console.log(select.value);
 
 let tableBodyHtml = "";
 let itemsAtPage = 5;
@@ -166,10 +165,10 @@ let numberOfPages = 0;
 
 showItems(library, 0, itemsAtPage);
 showNumberOfPages();
-// tableBody.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
-const pageButton = document.querySelectorAll('.pages__number');
+scroll.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
 
-select.addEventListener('change', () => {
+select.addEventListener('change', () => {    
+    console.log(select.value);
     itemsAtPage = Number(select.value);
     showItems(library, 0, itemsAtPage);
     showNumberOfPages();
@@ -179,14 +178,12 @@ pagination.addEventListener('click', () => {
 
     e = event.target;
 
-    if (pages.contains(e)) {
-        showPage();
-    }
-    if (e == prevButton) {
+    if (e.textContent === 'Previous') {
         showPrevPage();
-    }
-    if (e == nextButton) {
+    } else if (e.textContent === 'Next') {
         showNextPage();
+    } else {
+        showPage();
     }
 })
 
@@ -259,19 +256,38 @@ function showItems(data, from, to) {
 }
 
 function showNumberOfPages() {
-    pages.innerHTML = "";
+    pagination.innerHTML = "";
     getNumberOfPages()
 
     let fragment = document.createDocumentFragment();
+    let a;
+    let li;
+
+    createPaginationItem();
+    a.textContent = 'Previous';
+    li.append(a);
+    fragment.append(li);
 
     for (let i = 1; i <= numberOfPages; i++) {
-        let span = document.createElement('span');
-        span.setAttribute("class", "pages__number")
-        span.textContent = i;
-        fragment.append(span);
+        createPaginationItem();
+        a.textContent = i;
+        li.append(a);
+        fragment.append(li);
     }
 
-    pages.append(fragment);
+    createPaginationItem();
+    a.textContent = 'Next';
+    li.append(a);
+    fragment.append(li);
+
+    pagination.append(fragment);
+
+    function createPaginationItem() {
+        li = document.createElement('li');
+        li.setAttribute("class", "page-item");
+        a = document.createElement('li');
+        a.setAttribute("class", "page-link");
+    }
 }
 
 function clearItems() {

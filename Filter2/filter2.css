@@ -1,15 +1,5 @@
-.vinyls {
-    width: 50%;
-}
-
-.vinyls__title {
-    color: #343a40;
-    text-align: center;
-    font-size: 2rem;
-    line-height: 1.5;
-}
-
-.table-body {
+.scroll {
+    margin-top: -1rem;
     overflow: auto;
 }
 
@@ -17,31 +7,6 @@
     height: 100px;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-}
-
-.pagination__button {
-    height: 30px;
-    width: 50px;
-    text-align: center;
-}
-.pages {
-    height: 30px;
-}
-
-.pages__number {
-    display: inline-block;
-    height: 100%;
-    width: 20px;
-    text-align: center;
-}
-
-.pages__number:hover,
-.pagination__button:hover {
+.page-link {
     cursor: pointer;
-    background-color: #cccccc;
 }
