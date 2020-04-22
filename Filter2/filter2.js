@@ -151,32 +151,40 @@ const library = [
     // }
 ]
 
+const table = document.querySelector('[data-table=vinyls]');
 const tableBody = document.querySelector('[data-table=vinyls] tbody');
 const select = document.querySelector('[data-table=show]');
 const pagination = document.querySelector('.pagination');
 const scroll = document.querySelector('.scroll');
-console.log(tableBody);
-console.log(select.value);
+const defaultItemsAtPage = 5;
 
+let currentLibrary = [];
 let tableBodyHtml = "";
-let itemsAtPage = 5;
+let currentItemsAtPage = defaultItemsAtPage;
+let maxItemsAtPage = Number(select.value);
 let currentPage = 1;
 let numberOfPages = 0;
 
-showItems(library, 0, itemsAtPage);
+getCurrentLibrary(0, maxItemsAtPage);
+showItems(currentLibrary, 0, defaultItemsAtPage);
 showNumberOfPages();
 scroll.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
 
-select.addEventListener('change', () => {    
-    console.log(select.value);
-    itemsAtPage = Number(select.value);
-    showItems(library, 0, itemsAtPage);
+select.addEventListener('change', () => {
+    scroll.scrollTop = 0;
+    maxItemsAtPage = Number(select.value);
+    getCurrentLibrary(0, maxItemsAtPage);
+    showItems(currentLibrary, 0, defaultItemsAtPage);
     showNumberOfPages();
 })
 
 pagination.addEventListener('click', () => {
-
+    scroll.scrollTop = 0;
     e = event.target;
+    
+    if (e == pagination) {
+        return false;
+    }
 
     if (e.textContent === 'Previous') {
         showPrevPage();
@@ -187,10 +195,26 @@ pagination.addEventListener('click', () => {
     }
 })
 
+scroll.addEventListener('scroll', () => {
+    
+    let visibleHeight = defaultItemsAtPage * tableBody.firstElementChild.offsetHeight;
+    let scrollHeight = visibleHeight + scroll.scrollTop;
+    let currentItemsAtPage = Math.trunc(scrollHeight / tableBody.firstElementChild.offsetHeight);
+    
+    getVisibleItems();
+
+    if (currentItemsAtPage === visibleItems.length - 1) {
+        return;
+    }
+
+    clearItems();
+    showItems(currentLibrary, 0, currentItemsAtPage);
+});
+
 function showPage() {
     let selectedPage = getCurrentPage(event);
-    let last = selectedPage * itemsAtPage;
-    let first = last - itemsAtPage;
+    let last = selectedPage * maxItemsAtPage;
+    let first = last - maxItemsAtPage;
 
     if (last > library.length) {
         last = library.length;
@@ -198,9 +222,10 @@ function showPage() {
     
     if (currentPage === selectedPage) {
         return;
-    }   
-    
-    showItems(library, first, last);
+    }
+
+    getCurrentLibrary(first, last);
+    showItems(currentLibrary, 0, currentLibrary.length);
     currentPage = selectedPage;
 }
 
@@ -212,13 +237,14 @@ function showNextPage() {
 
     currentPage++;
 
-    let last = currentPage * itemsAtPage;
-    let first = last - itemsAtPage;
+    let last = currentPage * maxItemsAtPage;
+    let first = last - maxItemsAtPage;
     if (last > library.length) {
         last = library.length;
     }
-  
-    showItems(library, first, last);
+
+    getCurrentLibrary(first, last);
+    showItems(currentLibrary, 0, currentLibrary.length);
 }
 
 function showPrevPage() {
@@ -229,10 +255,10 @@ function showPrevPage() {
 
     currentPage--;
 
-    let last = currentPage * itemsAtPage;
-    let first = last - itemsAtPage;
-    
-    showItems(library, first, last);
+    let last = currentPage * maxItemsAtPage;
+    let first = last - maxItemsAtPage;
+    getCurrentLibrary(first, last);
+    showItems(currentLibrary, 0 , currentLibrary.length);
 }
 
 function showItems(data, from, to) {
@@ -242,17 +268,19 @@ function showItems(data, from, to) {
             tableBody.innerHTML += tableBodyHtml;
             return;
         }
-        tableBodyHtml += `
-            <tr>
-                <th scope="row">${library[i].id}</th>
-                <td><img class="table-image" src=${library[i].cover}></td>
-                <td>${library[i].name}</td>
-                <td>${library[i].year}</td>
-            </tr>
-        `
+        tableBodyHtml += `<tr>
+                <th scope="row">${data[i].id}</th>
+                <td><img class="table-image" src=${data[i].cover}></td>
+                <td>${data[i].name}</td>
+                <td>${data[i].year}</td>
+            </tr>`
     }
     tableBody.innerHTML += tableBodyHtml;
     tableBodyHtml = "";
+    getVisibleItems();
+    // if (maxItemsAtPage != defaultItemsAtPage) {
+        table.style.marginBottom = `${tableBody.firstElementChild.offsetHeight * (data.length - visibleItems.length)}px`;
+    // }
 }
 
 function showNumberOfPages() {
@@ -300,10 +328,28 @@ function clearItems() {
     }
 }
 
+function getCurrentLibrary(first, last) {
+
+    currentLibrary = [];
+
+    for(let i = first; i < last; i++) {
+        currentLibrary.push(library[i]);
+    }
+}
+
+function getVisibleItems() {
+
+    visibleItems = [];
+
+    tableBody.childNodes.forEach( (item) => {
+        visibleItems.push(item.innerHTML);
+    });
+}
+
 function getCurrentPage(event) {
     return Number(event.target.textContent);
 }
 
 function getNumberOfPages() {
-    numberOfPages = Math.ceil(library.length / itemsAtPage);
+    numberOfPages = Math.ceil(library.length / maxItemsAtPage);
 }
