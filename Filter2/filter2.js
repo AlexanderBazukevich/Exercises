@@ -97,7 +97,7 @@ const library = [
     },
     {
         id: "17",
-        cover: "../Vinyls/17.jpeg",
+        cover: "./Vinyls/17.jpeg",
         name: "Led Zeppelin - Led Zeppelin",
         year: "1968",
     },
@@ -151,6 +151,9 @@ const library = [
     // }
 ]
 
+// TODO name/year sorting (after sorting to first page)
+// TODO add form for adding new vinyls with validation
+
 const table = document.querySelector('[data-table=vinyls]');
 const tableBody = document.querySelector('[data-table=vinyls] tbody');
 const select = document.querySelector('[data-table=show]');
@@ -159,12 +162,12 @@ const scroll = document.querySelector('.scroll');
 const defaultItemsAtPage = 5;
 
 let currentLibrary = [];
-let tableBodyHtml = "";
 let currentItemsAtPage = defaultItemsAtPage;
 let maxItemsAtPage = Number(select.value);
 let currentPage = 1;
 let numberOfPages = 0;
 
+scroll.scrollTop = 0;
 getCurrentLibrary(0, maxItemsAtPage);
 showItems(currentLibrary, 0, defaultItemsAtPage);
 showNumberOfPages();
@@ -172,6 +175,7 @@ scroll.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
 
 select.addEventListener('change', () => {
     scroll.scrollTop = 0;
+    currentPage = 1;
     maxItemsAtPage = Number(select.value);
     getCurrentLibrary(0, maxItemsAtPage);
     showItems(currentLibrary, 0, defaultItemsAtPage);
@@ -188,7 +192,7 @@ pagination.addEventListener('click', () => {
 
     if (e.textContent === 'Previous') {
         showPrevPage();
-    } else if (e.textContent === 'Next') {
+    } else if (e.textContent === 'Next') { //TODO create selectors [data..] against textContent
         showNextPage();
     } else {
         showPage();
@@ -202,12 +206,6 @@ scroll.addEventListener('scroll', () => {
     let currentItemsAtPage = Math.trunc(scrollHeight / tableBody.firstElementChild.offsetHeight);
     
     getVisibleItems();
-
-    if (currentItemsAtPage === visibleItems.length - 1) {
-        return;
-    }
-
-    clearItems();
     showItems(currentLibrary, 0, currentItemsAtPage);
 });
 
@@ -230,7 +228,6 @@ function showPage() {
 }
 
 function showNextPage() {
-
     if (currentPage == numberOfPages) {
         return;
     }
@@ -257,15 +254,17 @@ function showPrevPage() {
 
     let last = currentPage * maxItemsAtPage;
     let first = last - maxItemsAtPage;
+
     getCurrentLibrary(first, last);
     showItems(currentLibrary, 0 , currentLibrary.length);
 }
 
 function showItems(data, from, to) {
-    clearItems();
+    clearItems();    
+    let tableBodyHtml = "";
     for (let i = from; i < to; i++) {
         if ( i >= data.length) {
-            tableBody.innerHTML += tableBodyHtml;
+            tableBody.innerHTML = tableBodyHtml;
             return;
         }
         tableBodyHtml += `<tr>
@@ -275,12 +274,9 @@ function showItems(data, from, to) {
                 <td>${data[i].year}</td>
             </tr>`
     }
-    tableBody.innerHTML += tableBodyHtml;
-    tableBodyHtml = "";
+    tableBody.innerHTML = tableBodyHtml;
     getVisibleItems();
-    // if (maxItemsAtPage != defaultItemsAtPage) {
-        table.style.marginBottom = `${tableBody.firstElementChild.offsetHeight * (data.length - visibleItems.length)}px`;
-    // }
+    table.style.marginBottom = `${tableBody.firstElementChild.offsetHeight * (data.length - visibleItems.length)}px`;
 }
 
 function showNumberOfPages() {
@@ -288,33 +284,25 @@ function showNumberOfPages() {
     getNumberOfPages()
 
     let fragment = document.createDocumentFragment();
-    let a;
-    let li;
 
-    createPaginationItem();
-    a.textContent = 'Previous';
-    li.append(a);
-    fragment.append(li);
+    createPaginationItem('Previous');
 
     for (let i = 1; i <= numberOfPages; i++) {
-        createPaginationItem();
-        a.textContent = i;
-        li.append(a);
-        fragment.append(li);
+        createPaginationItem(i);
     }
 
-    createPaginationItem();
-    a.textContent = 'Next';
-    li.append(a);
-    fragment.append(li);
+    createPaginationItem('Next');
 
     pagination.append(fragment);
 
-    function createPaginationItem() {
-        li = document.createElement('li');
+    function createPaginationItem(value) {
+        let li = document.createElement('li');
         li.setAttribute("class", "page-item");
-        a = document.createElement('li');
+        let a = document.createElement('span');
         a.setAttribute("class", "page-link");
+        a.textContent = value;
+        li.append(a);
+        fragment.append(li);
     }
 }
 
@@ -333,7 +321,7 @@ function getCurrentLibrary(first, last) {
     currentLibrary = [];
 
     for(let i = first; i < last; i++) {
-        currentLibrary.push(library[i]);
+        currentLibrary.push(library[i]); //TODO remove for
     }
 }
 
@@ -341,7 +329,7 @@ function getVisibleItems() {
 
     visibleItems = [];
 
-    tableBody.childNodes.forEach( (item) => {
+    tableBody.childNodes.forEach( (item) => { //TODO
         visibleItems.push(item.innerHTML);
     });
 }
