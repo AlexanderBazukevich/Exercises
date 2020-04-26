@@ -156,20 +156,22 @@ const library = [
 
 const table = document.querySelector('[data-table=vinyls]');
 const tableBody = document.querySelector('[data-table=vinyls] tbody');
+const tableHeader = document.querySelector('[data-table=columns] thead');
 const select = document.querySelector('[data-table=show]');
 const pagination = document.querySelector('.pagination');
 const scroll = document.querySelector('.scroll');
 const defaultItemsAtPage = 5;
 
-let currentLibrary = [];
+let currentLibrary = library;
+let visibleLibrary = [];
 let currentItemsAtPage = defaultItemsAtPage;
 let maxItemsAtPage = Number(select.value);
 let currentPage = 1;
 let numberOfPages = 0;
 
 scroll.scrollTop = 0;
-getCurrentLibrary(0, maxItemsAtPage);
-showItems(currentLibrary, 0, defaultItemsAtPage);
+getVisibleLibrary(0, maxItemsAtPage);
+showItems(visibleLibrary, 0, defaultItemsAtPage);
 showNumberOfPages();
 scroll.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
 
@@ -177,25 +179,60 @@ select.addEventListener('change', () => {
     scroll.scrollTop = 0;
     currentPage = 1;
     maxItemsAtPage = Number(select.value);
-    getCurrentLibrary(0, maxItemsAtPage);
-    showItems(currentLibrary, 0, defaultItemsAtPage);
+    getVisibleLibrary(0, maxItemsAtPage);
+    showItems(visibleLibrary, 0, defaultItemsAtPage);
     showNumberOfPages();
 })
 
 pagination.addEventListener('click', () => {
     scroll.scrollTop = 0;
     e = event.target;
+
+    let previous = document.querySelector('[data-table = Previous]');
+    let next = document.querySelector('[data-table = Next]');
     
     if (e == pagination) {
         return false;
     }
 
-    if (e.textContent === 'Previous') {
+    if (e == previous) {
         showPrevPage();
-    } else if (e.textContent === 'Next') { //TODO create selectors [data..] against textContent
+    } else if (e == next) {
         showNextPage();
     } else {
         showPage();
+    }
+})
+
+tableHeader.addEventListener('click', () => {
+    scroll.scrollTop = 0;
+    let e = event.target;
+    let value = e.getAttribute('value');
+
+    switch (e.getAttribute('data-table')) {
+        case 'Rating':
+            sortByParam('Rating');
+            break;
+        case 'Name':
+            sortByParam('Name');
+            break;
+        case 'Year':
+            sortByParam('Year');
+            break;
+        default:
+            return false;
+    }
+
+    maxItemsAtPage = Number(select.value);
+    if (value == 'A-Z') {
+        currentLibrary = currentLibrary.reverse();
+        getVisibleLibrary(0, maxItemsAtPage);
+        showItems(visibleLibrary, 0, maxItemsAtPage);
+        e.setAttribute('value', 'Z-A');
+    } else {
+        getVisibleLibrary(0, maxItemsAtPage);
+        showItems(visibleLibrary, 0, maxItemsAtPage);
+        e.setAttribute('value', 'A-Z');
     }
 })
 
@@ -205,8 +242,7 @@ scroll.addEventListener('scroll', () => {
     let scrollHeight = visibleHeight + scroll.scrollTop;
     let currentItemsAtPage = Math.trunc(scrollHeight / tableBody.firstElementChild.offsetHeight);
     
-    getVisibleItems();
-    showItems(currentLibrary, 0, currentItemsAtPage);
+    showItems(visibleLibrary, 0, currentItemsAtPage);
 });
 
 function showPage() {
@@ -222,8 +258,8 @@ function showPage() {
         return;
     }
 
-    getCurrentLibrary(first, last);
-    showItems(currentLibrary, 0, currentLibrary.length);
+    getVisibleLibrary(first, last);
+    showItems(visibleLibrary, 0, visibleLibrary.length);
     currentPage = selectedPage;
 }
 
@@ -240,8 +276,8 @@ function showNextPage() {
         last = library.length;
     }
 
-    getCurrentLibrary(first, last);
-    showItems(currentLibrary, 0, currentLibrary.length);
+    getVisibleLibrary(first, last);
+    showItems(visibleLibrary, 0, visibleLibrary.length);
 }
 
 function showPrevPage() {
@@ -255,8 +291,8 @@ function showPrevPage() {
     let last = currentPage * maxItemsAtPage;
     let first = last - maxItemsAtPage;
 
-    getCurrentLibrary(first, last);
-    showItems(currentLibrary, 0 , currentLibrary.length);
+    getVisibleLibrary(first, last);
+    showItems(visibleLibrary, 0 , visibleLibrary.length);
 }
 
 function showItems(data, from, to) {
@@ -275,8 +311,8 @@ function showItems(data, from, to) {
             </tr>`
     }
     tableBody.innerHTML = tableBodyHtml;
-    getVisibleItems();
-    table.style.marginBottom = `${tableBody.firstElementChild.offsetHeight * (data.length - visibleItems.length)}px`;
+    let visibleItemsLength = tableBody.childNodes.length;
+    table.style.marginBottom = `${tableBody.firstElementChild.offsetHeight * (data.length - visibleItemsLength)}px`;
 }
 
 function showNumberOfPages() {
@@ -300,6 +336,7 @@ function showNumberOfPages() {
         li.setAttribute("class", "page-item");
         let a = document.createElement('span');
         a.setAttribute("class", "page-link");
+        a.setAttribute('data-table', value);
         a.textContent = value;
         li.append(a);
         fragment.append(li);
@@ -316,22 +353,8 @@ function clearItems() {
     }
 }
 
-function getCurrentLibrary(first, last) {
-
-    currentLibrary = [];
-
-    for(let i = first; i < last; i++) {
-        currentLibrary.push(library[i]); //TODO remove for
-    }
-}
-
-function getVisibleItems() {
-
-    visibleItems = [];
-
-    tableBody.childNodes.forEach( (item) => { //TODO
-        visibleItems.push(item.innerHTML);
-    });
+function getVisibleLibrary(start, end) {
+    visibleLibrary = currentLibrary.slice(start, end);
 }
 
 function getCurrentPage(event) {
@@ -340,4 +363,43 @@ function getCurrentPage(event) {
 
 function getNumberOfPages() {
     numberOfPages = Math.ceil(library.length / maxItemsAtPage);
+}
+
+function sortByParam(param) {
+    scroll.scrollTop = 0;
+    currentPage = 1;
+
+    let tempOptionItems = [];
+
+    if (param == 'Name') {
+        tempOptionItems = library.map( (item, i) => {
+            return { index: i, value: item.name.toLowerCase() };
+        })
+    }
+
+    if (param == 'Year') {
+        tempOptionItems = library.map( (item, i) => {
+            return { index: i, value: item.year.toLowerCase() };
+        })
+    }
+
+    if (param == 'Rating') {
+        tempOptionItems = library.map( (item, i) => {
+            return { index: i, value: Number(item.id) };
+        })
+    }
+
+    tempOptionItems.sort( (a, b) => {
+        if (a.value > b.value) {
+            return 1;
+        }
+        if (a.value < b.value) {
+            return -1;
+        }
+        return 0;
+    })
+
+    currentLibrary = tempOptionItems.map( (item) => {
+        return library[item.index];
+    })
 }
