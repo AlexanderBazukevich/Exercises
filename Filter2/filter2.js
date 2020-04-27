@@ -157,9 +157,14 @@ const library = [
 const table = document.querySelector('[data-table=vinyls]');
 const tableBody = document.querySelector('[data-table=vinyls] tbody');
 const tableHeader = document.querySelector('[data-table=columns] thead');
+const addVinylForm = document.querySelector('[data-table=add-form]');
+const formButton = document.querySelector('[data-table=add-button]');
+const nameInput = document.querySelector('[data-table=name-input]');
+const yearInput = document.querySelector('[data-table=year-input]');
+const coverInput = document.querySelector('[data-table=cover-input]');
 const select = document.querySelector('[data-table=show]');
 const pagination = document.querySelector('.pagination');
-const scroll = document.querySelector('.scroll');
+const scrollTable = document.querySelector('.scroll');
 const defaultItemsAtPage = 5;
 
 let currentLibrary = library;
@@ -169,14 +174,49 @@ let maxItemsAtPage = Number(select.value);
 let currentPage = 1;
 let numberOfPages = 0;
 
-scroll.scrollTop = 0;
+scrollTable.scrollTop = 0;
 getVisibleLibrary(0, maxItemsAtPage);
 showItems(visibleLibrary, 0, defaultItemsAtPage);
 showNumberOfPages();
-scroll.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
+scrollTable.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
+addVinylForm.style.margin = `5px ${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth - 5}px 5px -${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth + 5}px`;
+
+window.addEventListener('resize', () => {
+    addVinylForm.style.margin = `5px ${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth - 5}px 5px -${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth + 5}px`;
+})
+
+formButton.addEventListener('click', () => {
+
+    if (formButton.innerHTML == 'Add vinyl') {
+        addVinylForm.style.margin = `5px -5px`;
+        formButton.innerHTML = 'Save';
+    } else {
+        if (checkValidity() == false) {
+            return false;
+        }
+
+        addVinylForm.style.margin = `5px ${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth - 5}px 5px -${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth + 5}px`;
+        formButton.innerHTML = 'Add vinyl';
+
+        currentLibrary.push({
+            id: String(currentLibrary.length + 1),
+            cover: "./Vinyls/23.jpeg",
+            name: nameInput.value,
+            year: yearInput.value,
+        });
+        nameInput.value = '';
+        yearInput.value = '';
+        coverInput.value = '';
+
+        getVisibleLibrary(0, maxItemsAtPage);
+        showItems(visibleLibrary, currentPage * maxItemsAtPage - maxItemsAtPage, defaultItemsAtPage);
+        showNumberOfPages();
+
+    }
+})
 
 select.addEventListener('change', () => {
-    scroll.scrollTop = 0;
+    scrollTable.scrollTop = 0;
     currentPage = 1;
     maxItemsAtPage = Number(select.value);
     getVisibleLibrary(0, maxItemsAtPage);
@@ -185,7 +225,7 @@ select.addEventListener('change', () => {
 })
 
 pagination.addEventListener('click', () => {
-    scroll.scrollTop = 0;
+    scrollTable.scrollTop = 0;
     e = event.target;
 
     let previous = document.querySelector('[data-table = Previous]');
@@ -205,13 +245,13 @@ pagination.addEventListener('click', () => {
 })
 
 tableHeader.addEventListener('click', () => {
-    scroll.scrollTop = 0;
+    scrollTable.scrollTop = 0;
     let e = event.target;
     let value = e.getAttribute('value');
 
     switch (e.getAttribute('data-table')) {
-        case 'Rating':
-            sortByParam('Rating');
+        case 'ID':
+            sortByParam('ID');
             break;
         case 'Name':
             sortByParam('Name');
@@ -236,10 +276,10 @@ tableHeader.addEventListener('click', () => {
     }
 })
 
-scroll.addEventListener('scroll', () => {
+scrollTable.addEventListener('scroll', () => {
     
     let visibleHeight = defaultItemsAtPage * tableBody.firstElementChild.offsetHeight;
-    let scrollHeight = visibleHeight + scroll.scrollTop;
+    let scrollHeight = visibleHeight + scrollTable.scrollTop;
     let currentItemsAtPage = Math.trunc(scrollHeight / tableBody.firstElementChild.offsetHeight);
     
     showItems(visibleLibrary, 0, currentItemsAtPage);
@@ -250,8 +290,8 @@ function showPage() {
     let last = selectedPage * maxItemsAtPage;
     let first = last - maxItemsAtPage;
 
-    if (last > library.length) {
-        last = library.length;
+    if (last > currentLibrary.length) {
+        last = currentLibrary.length;
     }
     
     if (currentPage === selectedPage) {
@@ -272,8 +312,8 @@ function showNextPage() {
 
     let last = currentPage * maxItemsAtPage;
     let first = last - maxItemsAtPage;
-    if (last > library.length) {
-        last = library.length;
+    if (last > currentLibrary.length) {
+        last = currentLibrary.length;
     }
 
     getVisibleLibrary(first, last);
@@ -296,7 +336,7 @@ function showPrevPage() {
 }
 
 function showItems(data, from, to) {
-    clearItems();    
+    clearItems();
     let tableBodyHtml = "";
     for (let i = from; i < to; i++) {
         if ( i >= data.length) {
@@ -362,29 +402,29 @@ function getCurrentPage(event) {
 }
 
 function getNumberOfPages() {
-    numberOfPages = Math.ceil(library.length / maxItemsAtPage);
+    numberOfPages = Math.ceil(currentLibrary.length / maxItemsAtPage);
 }
 
 function sortByParam(param) {
-    scroll.scrollTop = 0;
+    scrollTable.scrollTop = 0;
     currentPage = 1;
 
     let tempOptionItems = [];
 
     if (param == 'Name') {
-        tempOptionItems = library.map( (item, i) => {
+        tempOptionItems = currentLibrary.map( (item, i) => {
             return { index: i, value: item.name.toLowerCase() };
         })
     }
 
     if (param == 'Year') {
-        tempOptionItems = library.map( (item, i) => {
+        tempOptionItems = currentLibrary.map( (item, i) => {
             return { index: i, value: item.year.toLowerCase() };
         })
     }
 
-    if (param == 'Rating') {
-        tempOptionItems = library.map( (item, i) => {
+    if (param == 'ID') {
+        tempOptionItems = currentLibrary.map( (item, i) => {
             return { index: i, value: Number(item.id) };
         })
     }
@@ -400,6 +440,35 @@ function sortByParam(param) {
     })
 
     currentLibrary = tempOptionItems.map( (item) => {
-        return library[item.index];
+        return currentLibrary[item.index];
     })
 }
+
+function checkValidity() {
+    if (nameInput.value == '' || yearInput.value == '' || coverInput.value == '') {
+        return false;
+    }
+
+    if (yearValidation(yearInput.value) == false) {
+        return false;
+    };
+}
+
+function yearValidation(year) {
+
+    let text = /^[0-9]+$/;
+    let currentYear = new Date().getFullYear();
+
+    if (!text.test(year)) {
+        yearInput.value = "Incorrect year";
+        return false;
+    }
+    if (year.length != 4) {
+        yearInput.value = "Incorrect year";
+        return false;
+    }
+    if ((year < 1920) || (year > currentYear)){
+        yearInput.value = "Incorrect year";
+        return false;
+    }
+} 

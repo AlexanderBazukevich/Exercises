@@ -1,3 +1,12 @@
+
+form {
+    overflow: hidden;
+}
+
+.form-row {
+    transition: margin .5s ease-in-out;
+}
+
 .table {
     margin-bottom: 0;
 }

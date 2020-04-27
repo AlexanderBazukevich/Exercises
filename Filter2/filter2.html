@@ -16,10 +16,29 @@
                     <option>20</option>
                 </select>
             </div>
+            <form>
+                <div class="form-row" data-table="add-form">
+                    <div class="col">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="customFile" data-table="cover-input">
+                            <label class="custom-file-label" for="customFile">Choose cover</label>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <input type="text" class="form-control" placeholder="Artist and album name" data-table="name-input">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Release year" data-table="year-input">
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-primary mb-2 shadow-none" data-table="add-button">Add vinyl</button>
+                    </div>
+                </div>
+            </form>
             <table class="table" data-table="columns">
                 <thead class="thead-dark">
                     <tr>
-                        <th scope="col" data-table="Rating" width="60" value="">Rating</th>
+                        <th scope="col" data-table="ID" width="60" value="">#</th>
                         <th scope="col" data-table="Cover" width="230">Cover</th>
                         <th scope="col" data-table="Name" width="715" value="">Name</th>
                         <th scope="col" data-table="Year" width="105" value="">Year</th>
