@@ -16,25 +16,33 @@
                     <option>20</option>
                 </select>
             </div>
-            <form>
-                <div class="form-row" data-table="add-form">
+            <!--  -->
+            <form class="needs-validation" data-form="form" novalidate>
+                <div class="form-row" data-form="add-form">
                     <div class="col">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile" data-table="cover-input">
-                            <label class="custom-file-label" for="customFile">Choose cover</label>
+                        <input type="text" class="form-control" placeholder="Path to file" data-form="cover-input" required>
+                        <div class="invalid-feedback">
+                            Please add cover.
                         </div>
                     </div>
                     <div class="col-5">
-                        <input type="text" class="form-control" placeholder="Artist and album name" data-table="name-input">
+                        <input type="text" class="form-control" placeholder="Artist and album name" data-form="name-input" required>
+                        <div class="invalid-feedback">
+                            Please enter artist and album.
+                        </div>
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" placeholder="Release year" data-table="year-input">
+                        <input type="text" class="form-control" placeholder="Release year" data-form="year-input" required>
+                        <div class="invalid-feedback">
+                            Please enter year.
+                        </div>
                     </div>
                     <div class="col">
-                        <button type="button" class="btn btn-primary mb-2 shadow-none" data-table="add-button">Add vinyl</button>
+                        <button type="submit" class="btn btn-primary shadow-none" data-form="submit">Save</button>
                     </div>
                 </div>
             </form>
+            <!-- form and add button must be separate -->
             <table class="table" data-table="columns">
                 <thead class="thead-dark">
                     <tr>

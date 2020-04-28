@@ -151,18 +151,16 @@ const library = [
     // }
 ]
 
-// TODO name/year sorting (after sorting to first page)
-// TODO add form for adding new vinyls with validation
-
 const table = document.querySelector('[data-table=vinyls]');
 const tableBody = document.querySelector('[data-table=vinyls] tbody');
 const tableHeader = document.querySelector('[data-table=columns] thead');
-const addVinylForm = document.querySelector('[data-table=add-form]');
-const formButton = document.querySelector('[data-table=add-button]');
-const nameInput = document.querySelector('[data-table=name-input]');
-const yearInput = document.querySelector('[data-table=year-input]');
-const coverInput = document.querySelector('[data-table=cover-input]');
 const select = document.querySelector('[data-table=show]');
+const addForm = document.querySelector('[data-form=form]');
+const addVinylForm = document.querySelector('[data-form=add-form]');
+const nameInput = document.querySelector('[data-form=name-input]');
+const yearInput = document.querySelector('[data-form=year-input]');
+const coverInput = document.querySelector('[data-form=cover-input]');
+const formSubmit = document.querySelector('[data-form=submit]')
 const pagination = document.querySelector('.pagination');
 const scrollTable = document.querySelector('.scroll');
 const defaultItemsAtPage = 5;
@@ -179,40 +177,22 @@ getVisibleLibrary(0, maxItemsAtPage);
 showItems(visibleLibrary, 0, defaultItemsAtPage);
 showNumberOfPages();
 scrollTable.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
-addVinylForm.style.margin = `5px ${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth - 5}px 5px -${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth + 5}px`;
 
-window.addEventListener('resize', () => {
-    addVinylForm.style.margin = `5px ${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth - 5}px 5px -${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth + 5}px`;
-})
-
-formButton.addEventListener('click', () => {
-
-    if (formButton.innerHTML == 'Add vinyl') {
-        addVinylForm.style.margin = `5px -5px`;
-        formButton.innerHTML = 'Save';
-    } else {
-        if (checkValidity() == false) {
-            return false;
-        }
-
-        addVinylForm.style.margin = `5px ${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth - 5}px 5px -${addVinylForm.offsetWidth - addVinylForm.lastElementChild.offsetWidth + 5}px`;
-        formButton.innerHTML = 'Add vinyl';
-
-        currentLibrary.push({
-            id: String(currentLibrary.length + 1),
-            cover: "./Vinyls/23.jpeg",
-            name: nameInput.value,
-            year: yearInput.value,
-        });
-        nameInput.value = '';
-        yearInput.value = '';
-        coverInput.value = '';
-
-        getVisibleLibrary(0, maxItemsAtPage);
-        showItems(visibleLibrary, currentPage * maxItemsAtPage - maxItemsAtPage, defaultItemsAtPage);
-        showNumberOfPages();
-
+addForm.addEventListener('submit', (event) => {
+    if (addForm.checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+        addForm.classList.add('was-validated');
+        return false;
     }
+    addForm.classList.add('was-validated');
+    event.preventDefault();
+    addNewVinyl(coverInput.value, nameInput.value, yearInput.value);
+    getVisibleLibrary(0, maxItemsAtPage);
+    showItems(visibleLibrary, 0, defaultItemsAtPage); //TODO show last page with added item
+    showNumberOfPages();
+    addForm.reset();
+    addForm.classList.remove('was-validated');
 })
 
 select.addEventListener('change', () => {
@@ -222,6 +202,7 @@ select.addEventListener('change', () => {
     getVisibleLibrary(0, maxItemsAtPage);
     showItems(visibleLibrary, 0, defaultItemsAtPage);
     showNumberOfPages();
+    console.log(currentPage);
 })
 
 pagination.addEventListener('click', () => {
@@ -278,22 +259,27 @@ tableHeader.addEventListener('click', () => {
 
 scrollTable.addEventListener('scroll', () => {
     
-    let visibleHeight = defaultItemsAtPage * tableBody.firstElementChild.offsetHeight;
+    let firstHeight = tableBody.firstElementChild.offsetHeight;
+    let visibleHeight = defaultItemsAtPage * firstHeight;
     let scrollHeight = visibleHeight + scrollTable.scrollTop;
-    let currentItemsAtPage = Math.trunc(scrollHeight / tableBody.firstElementChild.offsetHeight);
-    
-    showItems(visibleLibrary, 0, currentItemsAtPage);
+    let currentItemsAtPage = Math.trunc(scrollHeight / firstHeight);
+
+    if (currentItemsAtPage <= tableBody.childNodes.length) {
+        return false;
+    }
+
+    showItems(visibleLibrary, 0, currentItemsAtPage); //TODO fix bug with scroll sticking to bottom
 });
 
 function showPage() {
-    let selectedPage = getCurrentPage(event);
+    let selectedPage = getSelectedPage(event);
     let last = selectedPage * maxItemsAtPage;
     let first = last - maxItemsAtPage;
 
     if (last > currentLibrary.length) {
         last = currentLibrary.length;
     }
-    
+
     if (currentPage === selectedPage) {
         return;
     }
@@ -397,7 +383,7 @@ function getVisibleLibrary(start, end) {
     visibleLibrary = currentLibrary.slice(start, end);
 }
 
-function getCurrentPage(event) {
+function getSelectedPage(event) {
     return Number(event.target.textContent);
 }
 
@@ -444,31 +430,42 @@ function sortByParam(param) {
     })
 }
 
-function checkValidity() {
-    if (nameInput.value == '' || yearInput.value == '' || coverInput.value == '') {
-        return false;
-    }
+function addNewVinyl(cover, name, year) {
 
-    if (yearValidation(yearInput.value) == false) {
-        return false;
-    };
+    currentPage = 1;
+
+    currentLibrary.push({
+        id: String(currentLibrary.length + 1),
+        cover: cover,
+        name: name,
+        year: year,
+    });
 }
+// function checkValidity() {
+//     if (nameInput.value == '' || yearInput.value == '' || coverInput.value == '') {
+//         return false;
+//     }
 
-function yearValidation(year) {
+//     if (yearValidation(yearInput.value) == false) {
+//         return false;
+//     };
+// }
 
-    let text = /^[0-9]+$/;
-    let currentYear = new Date().getFullYear();
+// function yearValidation(year) {
 
-    if (!text.test(year)) {
-        yearInput.value = "Incorrect year";
-        return false;
-    }
-    if (year.length != 4) {
-        yearInput.value = "Incorrect year";
-        return false;
-    }
-    if ((year < 1920) || (year > currentYear)){
-        yearInput.value = "Incorrect year";
-        return false;
-    }
-} 
+//     let text = /^[0-9]+$/;
+//     let currentYear = new Date().getFullYear();
+
+//     if (!text.test(year)) {
+//         yearInput.value = "Incorrect year";
+//         return false;
+//     }
+//     if (year.length != 4) {
+//         yearInput.value = "Incorrect year";
+//         return false;
+//     }
+//     if ((year < 1920) || (year > currentYear)){
+//         yearInput.value = "Incorrect year";
+//         return false;
+//     }
+// }
