@@ -155,12 +155,14 @@ const table = document.querySelector('[data-table=vinyls]');
 const tableBody = document.querySelector('[data-table=vinyls] tbody');
 const tableHeader = document.querySelector('[data-table=columns] thead');
 const select = document.querySelector('[data-table=show]');
+const addVinyl = document.querySelector('[data-modal=add-vinyl]');
+const addVinylButton = document.querySelector('[data-button=add-modal')
 const addForm = document.querySelector('[data-form=form]');
-const addVinylForm = document.querySelector('[data-form=add-form]');
 const nameInput = document.querySelector('[data-form=name-input]');
 const yearInput = document.querySelector('[data-form=year-input]');
 const coverInput = document.querySelector('[data-form=cover-input]');
 const formSubmit = document.querySelector('[data-form=submit]')
+const formClose = document.querySelector('[data-form=close]')
 const pagination = document.querySelector('.pagination');
 const scrollTable = document.querySelector('.scroll');
 const defaultItemsAtPage = 5;
@@ -178,6 +180,16 @@ showItems(visibleLibrary, 0, defaultItemsAtPage);
 showNumberOfPages();
 scrollTable.style.height = `${tableBody.firstElementChild.offsetHeight * 5}px`;
 
+addVinylButton.addEventListener('click', () => {
+    $('#addVinyl').modal('show');
+})
+
+//resets form after modal hide event
+$('#addVinyl').on('hide.bs.modal', () => {
+    addForm.reset();
+    addForm.classList.remove('was-validated');
+})
+
 addForm.addEventListener('submit', (event) => {
     if (addForm.checkValidity() === false) {
         event.preventDefault();
@@ -193,6 +205,7 @@ addForm.addEventListener('submit', (event) => {
     showNumberOfPages();
     addForm.reset();
     addForm.classList.remove('was-validated');
+    $('#addVinyl').modal('hide');
 })
 
 select.addEventListener('change', () => {
