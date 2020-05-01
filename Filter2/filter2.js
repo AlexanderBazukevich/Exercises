@@ -200,7 +200,7 @@ addForm.addEventListener('submit', (event) => {
     addForm.classList.add('was-validated');
     event.preventDefault();
     addNewVinyl(coverInput.value, nameInput.value, yearInput.value);
-    getVisibleLibrary(0, maxItemsAtPage);
+    getVisibleLibrary(currentPage * maxItemsAtPage - maxItemsAtPage, currentPage * maxItemsAtPage);
     showItems(visibleLibrary, 0, defaultItemsAtPage); //TODO show last page with added item
     showNumberOfPages();
     addForm.reset();
@@ -445,7 +445,7 @@ function sortByParam(param) {
 
 function addNewVinyl(cover, name, year) {
 
-    currentPage = 1;
+    // currentPage = 1;
 
     currentLibrary.push({
         id: String(currentLibrary.length + 1),
