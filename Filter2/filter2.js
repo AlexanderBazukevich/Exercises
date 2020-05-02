@@ -1,150 +1,125 @@
 const library = [
     {
-        id: "1",
         cover: "./Vinyls/1.jpeg",
         name: "Pink Floyd - The Dark Side Of The Moon",
         year: "1973",
     },
     {
-        id: "2",
         cover: "./Vinyls/2.jpeg",
         name: "Bruce Springsteen ‎– Born To Run",
         year: "1975",
     },
     {
-        id: "3",
         cover: "./Vinyls/3.jpeg",
         name: "Simon and Garfunkel* - Bridge Over Troubled Water",
         year: "1969",
     },
     {
-        id: "4",
         cover: "./Vinyls/4.jpeg",
         name: "Carole King - Tapestry",
         year: "1973",
     },
     {
-        id: "5",
         cover: "./Vinyls/5.jpeg",
         name: "Crosby, Stills, Nash & Young - Déjà Vu",
         year: "1970",
     },
     {
-        id: "6",
         cover: "./Vinyls/6.jpeg",
         name: "Van Morrison - Astral Weeks",
         year: "1968",
     },
     {
-        id: "7",
         cover: "./Vinyls/7.jpeg",
         name: "Led Zeppelin - Untitled",
         year: "1971",
     },
     {
-        id: "8",
         cover: "./Vinyls/8.jpeg",
         name: "The Rolling Stones - Sticky Fingers",
         year: "1971",
     },
     {
-        id: "9",
         cover: "./Vinyls/9.jpeg",
         name: "The Who - Tommy",
         year: "1969",
     },
     {
-        id: "10",
         cover: "./Vinyls/10.jpeg",
         name: "The Beatles - The Beatles",
         year: "1968",
     },
     {
-        id: "11",
         cover: "./Vinyls/11.jpeg",
         name: "Pink Floyd ‎– The Wall",
         year: "1979",
     },
     {
-        id: "12",
         cover: "./Vinyls/12.jpeg",
         name: "Bob Dylan ‎– Nashville Skyline",
         year: "1969",
     },
     {
-        id: "13",
         cover: "./Vinyls/13.jpeg",
         name: "Santana - Abraxas",
         year: "1970",
     },
     {
-        id: "14",
         cover: "./Vinyls/14.jpeg",
         name: "The Who ‎– Who's Next",
         year: "1971",
     },
     {
-        id: "15",
         cover: "./Vinyls/15.jpeg",
         name: "The Beatles - Help!",
         year: "1965",
     },
     {
-        id: "16",
         cover: "./Vinyls/16.jpeg",
         name: "Marvin Gaye - What's Going On",
         year: "1971",
     },
     {
-        id: "17",
         cover: "./Vinyls/17.jpeg",
         name: "Led Zeppelin - Led Zeppelin",
         year: "1968",
     },
     {
-        id: "18",
         cover: "./Vinyls/18.jpeg",
         name: "Joni Mitchell - Blue",
         year: "1971",
     },
     {
-        id: "19",
         cover: "./Vinyls/19.jpeg",
         name: "Pretenders* - Pretenders",
         year: "1980",
     },
     {
-        id: "20",
         cover: "./Vinyls/20.jpeg",
         name: "Bob Dylan - Blonde On Blonde",
         year: "1966",
     },
     {
-        id: "21",
         cover: "./Vinyls/21.jpeg",
         name: "The Beatles ‎– Sgt. Pepper's Lonely Hearts Club Band",
         year: "1967",
     },
     {
-        id: "22",
         cover: "./Vinyls/22.jpeg",
         name: "Elton John - Goodbye Yellow Brick Road",
         year: "1973",
     },
     {
-        id: "23",
         cover: "./Vinyls/23.jpeg",
         name: "The Clash - London Calling",
         year: "1979",
     },
     {
-        id: "24",
         cover: "./Vinyls/24.jpeg",
         name: "David Bowie - The Rise And Fall Of Ziggy Stardust And The Spiders From Mars",
         year: "1972",
     }
     // {
-    //     id: "25",
     //     cover: "./Vinyls/25.jpeg",
     //     name: "Stevie Wonder ‎– Songs In The Key Of Life",
     //     year: "1976",
@@ -200,8 +175,8 @@ addForm.addEventListener('submit', (event) => {
     addForm.classList.add('was-validated');
     event.preventDefault();
     addNewVinyl(coverInput.value, nameInput.value, yearInput.value);
-    getVisibleLibrary(currentPage * maxItemsAtPage - maxItemsAtPage, currentPage * maxItemsAtPage);
-    showItems(visibleLibrary, 0, defaultItemsAtPage); //TODO show last page with added item
+    getVisibleLibrary((currentPage - 1) * maxItemsAtPage, currentPage * maxItemsAtPage);
+    showItems(visibleLibrary, 0, defaultItemsAtPage);
     showNumberOfPages();
     addForm.reset();
     addForm.classList.remove('was-validated');
@@ -215,7 +190,6 @@ select.addEventListener('change', () => {
     getVisibleLibrary(0, maxItemsAtPage);
     showItems(visibleLibrary, 0, defaultItemsAtPage);
     showNumberOfPages();
-    console.log(currentPage);
 })
 
 pagination.addEventListener('click', () => {
@@ -244,9 +218,6 @@ tableHeader.addEventListener('click', () => {
     let value = e.getAttribute('value');
 
     switch (e.getAttribute('data-table')) {
-        case 'ID':
-            sortByParam('ID');
-            break;
         case 'Name':
             sortByParam('Name');
             break;
@@ -256,6 +227,8 @@ tableHeader.addEventListener('click', () => {
         default:
             return false;
     }
+    //TODO optimize (replace switch case)
+    //TODO every new column sorting begins from 'A-Z'
 
     maxItemsAtPage = Number(select.value);
     if (value == 'A-Z') {
@@ -277,7 +250,7 @@ scrollTable.addEventListener('scroll', () => {
     let scrollHeight = visibleHeight + scrollTable.scrollTop;
     let currentItemsAtPage = Math.trunc(scrollHeight / firstHeight);
 
-    if (currentItemsAtPage <= tableBody.childNodes.length) {
+    if (currentItemsAtPage == tableBody.childNodes.length) {
         return false;
     }
 
@@ -298,7 +271,7 @@ function showPage() {
     }
 
     getVisibleLibrary(first, last);
-    showItems(visibleLibrary, 0, visibleLibrary.length);
+    showItems(visibleLibrary, 0, defaultItemsAtPage);
     currentPage = selectedPage;
 }
 
@@ -316,7 +289,7 @@ function showNextPage() {
     }
 
     getVisibleLibrary(first, last);
-    showItems(visibleLibrary, 0, visibleLibrary.length);
+    showItems(visibleLibrary, 0, defaultItemsAtPage);
 }
 
 function showPrevPage() {
@@ -331,7 +304,7 @@ function showPrevPage() {
     let first = last - maxItemsAtPage;
 
     getVisibleLibrary(first, last);
-    showItems(visibleLibrary, 0 , visibleLibrary.length);
+    showItems(visibleLibrary, 0, defaultItemsAtPage);
 }
 
 function showItems(data, from, to) {
@@ -340,10 +313,11 @@ function showItems(data, from, to) {
     for (let i = from; i < to; i++) {
         if ( i >= data.length) {
             tableBody.innerHTML = tableBodyHtml;
+            table.style.marginBottom = 0;
             return;
         }
         tableBodyHtml += `<tr>
-                <th scope="row">${data[i].id}</th>
+                <th scope="row">${currentLibrary.indexOf(data[i]) + 1}</th>
                 <td><img class="table-image" src=${data[i].cover}></td>
                 <td>${data[i].name}</td>
                 <td>${data[i].year}</td>
