@@ -148,6 +148,8 @@ let currentItemsAtPage = defaultItemsAtPage;
 let maxItemsAtPage = Number(select.value);
 let currentPage = 1;
 let numberOfPages = 0;
+let sortOrder = "A-Z";
+let prevSortColumn;
 
 scrollTable.scrollTop = 0;
 getVisibleLibrary(0, maxItemsAtPage);
@@ -214,32 +216,31 @@ pagination.addEventListener('click', () => {
 
 tableHeader.addEventListener('click', () => {
     scrollTable.scrollTop = 0;
-    let e = event.target;
-    let value = e.getAttribute('value');
+    let name = document.querySelector('[data-table=name]');
+    let year = document.querySelector('[data-table=year]');
 
-    switch (e.getAttribute('data-table')) {
-        case 'Name':
-            sortByParam('Name');
-            break;
-        case 'Year':
-            sortByParam('Year');
-            break;
-        default:
-            return false;
+    let currentSortColumn = event.target;
+
+    if (currentSortColumn == name) {
+        sortByParam('Name');
     }
-    //TODO optimize (replace switch case)
-    //TODO every new column sorting begins from 'A-Z'
+
+    if (currentSortColumn == year) {
+        sortByParam('Year');
+    }
 
     maxItemsAtPage = Number(select.value);
-    if (value == 'A-Z') {
+    if (sortOrder == 'A-Z' || prevSortColumn != currentSortColumn) {
+        getVisibleLibrary(0, maxItemsAtPage);
+        showItems(visibleLibrary, 0, maxItemsAtPage);
+        prevSortColumn = currentSortColumn;
+        sortOrder = 'Z-A';
+    } else {
         currentLibrary = currentLibrary.reverse();
         getVisibleLibrary(0, maxItemsAtPage);
         showItems(visibleLibrary, 0, maxItemsAtPage);
-        e.setAttribute('value', 'Z-A');
-    } else {
-        getVisibleLibrary(0, maxItemsAtPage);
-        showItems(visibleLibrary, 0, maxItemsAtPage);
-        e.setAttribute('value', 'A-Z');
+        prevSortColumn = currentSortColumn;
+        sortOrder = 'A-Z';
     }
 })
 
@@ -393,12 +394,6 @@ function sortByParam(param) {
     if (param == 'Year') {
         tempOptionItems = currentLibrary.map( (item, i) => {
             return { index: i, value: item.year.toLowerCase() };
-        })
-    }
-
-    if (param == 'ID') {
-        tempOptionItems = currentLibrary.map( (item, i) => {
-            return { index: i, value: Number(item.id) };
         })
     }
 
