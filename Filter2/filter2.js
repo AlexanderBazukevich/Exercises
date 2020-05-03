@@ -35,6 +35,11 @@ const library = [
         year: "1971",
     },
     {
+        cover: "./Vinyls/24.jpeg",
+        name: "David Bowie - The Rise And Fall Of Ziggy Stardust And The Spiders From Mars",
+        year: "1972",
+    },
+    {
         cover: "./Vinyls/8.jpeg",
         name: "The Rolling Stones - Sticky Fingers",
         year: "1971",
@@ -113,11 +118,6 @@ const library = [
         cover: "./Vinyls/23.jpeg",
         name: "The Clash - London Calling",
         year: "1979",
-    },
-    {
-        cover: "./Vinyls/24.jpeg",
-        name: "David Bowie - The Rise And Fall Of Ziggy Stardust And The Spiders From Mars",
-        year: "1972",
     }
     // {
     //     cover: "./Vinyls/25.jpeg",
@@ -126,6 +126,7 @@ const library = [
     // }
 ]
 
+const scrollTable = document.querySelector('.scroll');
 const table = document.querySelector('[data-table=vinyls]');
 const tableBody = document.querySelector('[data-table=vinyls] tbody');
 const tableHeader = document.querySelector('[data-table=columns] thead');
@@ -139,7 +140,6 @@ const coverInput = document.querySelector('[data-form=cover-input]');
 const formSubmit = document.querySelector('[data-form=submit]')
 const formClose = document.querySelector('[data-form=close]')
 const pagination = document.querySelector('.pagination');
-const scrollTable = document.querySelector('.scroll');
 const defaultItemsAtPage = 5;
 
 let currentLibrary = library;
@@ -220,6 +220,10 @@ tableHeader.addEventListener('click', () => {
     let year = document.querySelector('[data-table=year]');
 
     let currentSortColumn = event.target;
+
+    if (currentSortColumn != name && currentSortColumn != year) {
+        return false;
+    }
 
     if (currentSortColumn == name) {
         sortByParam('Name');
@@ -319,14 +323,22 @@ function showItems(data, from, to) {
         }
         tableBodyHtml += `<tr>
                 <th scope="row">${currentLibrary.indexOf(data[i]) + 1}</th>
-                <td><img class="table-image" src=${data[i].cover}></td>
+                <td><img class="vinyl-image" src=${data[i].cover}></td>
                 <td>${data[i].name}</td>
-                <td>${data[i].year}</td>
+                <td class="vinyl-year">${data[i].year}</td>
             </tr>`
     }
     tableBody.innerHTML = tableBodyHtml;
     let visibleItemsLength = tableBody.childNodes.length;
     table.style.marginBottom = `${tableBody.firstElementChild.offsetHeight * (data.length - visibleItemsLength)}px`;
+
+    //change width of last elements in every row when scroll appears
+    if (scrollTable.offsetWidth > table.offsetWidth) {
+        let vinylYears = document.querySelectorAll('.vinyl-year');
+        vinylYears.forEach( (item) => {
+            item.style.width = `${item.offsetWidth - (scrollTable.offsetWidth - table.offsetWidth)}px`;
+        })
+    }
 }
 
 function showNumberOfPages() {

@@ -2,17 +2,31 @@
     margin-bottom: 0;
 }
 
+.table tbody tr:first-child {
+    width: 60px;
+}
+
+.table tbody tr td:nth-child(2) {
+    width: 230px;
+}
+
+.table tbody tr td:nth-child(3) {
+    width: 715px;
+}
+
+.table tbody tr td:nth-child(4) {
+    width: 105px;
+}
+
 .scroll {
     overflow: auto;
 }
 
-.table-image {
+.vinyl-image {
     height: 100px;
+    min-height: 100px;
 }
 
 .page-link {
     cursor: pointer;
 }
-
-
-/* TODO fix cells sizes*/
