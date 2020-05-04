@@ -3,23 +3,11 @@
 }
 
 .table tbody tr:first-child {
-    width: 60px;
-}
-
-.table tbody tr td:nth-child(2) {
-    width: 230px;
-}
-
-.table tbody tr td:nth-child(3) {
-    width: 715px;
-}
-
-.table tbody tr td:nth-child(4) {
-    width: 105px;
+    visibility: collapse;
 }
 
 .scroll {
-    overflow: auto;
+    overflow-y: scroll;
 }
 
 .vinyl-image {
