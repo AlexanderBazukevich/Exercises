@@ -1,16 +1,11 @@
-import { Base } from "./base.js"
-import { level } from "../data/data.js"
-
+import { Base } from "./base.js";
+import { ctx } from "../data/data.js";
 export class Place extends Base {
-    constructor(x, y, width, height, color) {
-        super(x, y, width, height, color)
+    constructor(params) {
+        super(params);
     }
-
-    isEmpty() {
-        let i = this.getI();
-        let j = this.getJ();
-        if (level[i][j][0] === 4 && this.color === level[i][j][1] || level[i][j][0] === 5) {
-            return false;
-        } else return true;
+    draw() {
+        ctx.strokeStyle = this.color;
+        ctx.strokeRect(this.x * this.size, this.y * this.size, this.size, this.size);
     }
 }

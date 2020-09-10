@@ -1,0 +1,16 @@
+{
+  "name": "boxplace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^4.0.2"
+  },
+  "scripts": {
+    "compile": "tsc ./src/pages/index.ts",
+    "tsc": "tsc"
+  },
+  "author": "",
+  "license": "ISC"
+}

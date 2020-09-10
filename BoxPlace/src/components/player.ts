@@ -1,15 +1,19 @@
-import { Base } from "./base.js";
-import { ctx, length, KEY_MAP } from "../data/data.js";
+import { Base, iParams } from "./base.js"
+import { ctx, length, KEY_MAP } from "../data/data.js"
+
 export class Player extends Base {
-    constructor(params) {
+
+    constructor(params: iParams) {
         super(params);
     }
-    draw() {
+
+    draw(): void {
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x * this.size, this.y * this.size, this.size, this.size);
+        ctx.fillRect(this.x*this.size, this.y*this.size, this.size, this.size);
     }
-    update(key) {
-        let i = +this.index;
+
+    update(key: number): void {
+        let i: number = +this.index;
         switch (key) {
             case KEY_MAP.LEFT:
                 if (this.canGoLeft(i)) {
