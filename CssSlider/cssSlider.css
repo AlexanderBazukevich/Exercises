@@ -9,6 +9,7 @@ body {
 .flowers {
   height: 200px;
   width: 200px;
+  border: 1px solid #000000;
 }
 
 .slider {
@@ -26,7 +27,6 @@ body {
 }
 
 .slider__item {
-  display: grid;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   background-image: var(--bg);
